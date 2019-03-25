@@ -10,24 +10,34 @@ test('bar', async t => {
   t.is(await bar, 'bar');
 });
 
+
 test('regex parse',  t => {
    const regexText = regexHighlight({ regex: '/a|b+/' });
    t.truthy(regexText);
-    
 });
 
-test('regex parse with errors',  t => {
+test('passing RegExp object', t => {
     try {
-        const regexText = regexHighlight({ regex: '/a|b++/' });
-        // FIXME: this will behave differently if passed as a RegExp object 
-        // (without the quotes)
+        const regexText = regexHighlight({ regex: /a|b+/ });
+        // we outlaw this because we want regexHighlight to throw the 
+        // errors, rather than JavaScript doing so.
     }
     catch (err) {
-        // console.log(err);
-        t.is(err['text'], 'Unexpected token in regex parse');
+        t.is(err['message'], 'Parameter regex must be a string');
+    }
+});
+
+test('regex string parse with errors',  t => {
+    try {
+        const regexText = regexHighlight({ regex: '/a|b++/' });
+    }
+    catch (err) {
+        t.is(err['message'], 'Unexpected token');
         t.is(err['token'], '+');
         t.is(err['column'], '5');
         t.is(err['line'], '1');
         t.is(err['pattern'], '/a|b++/');
     }
 });
+
+//var regex1 = '/q(?!u)(\w+)[a-z]{1,}(?<hello>{{hello}})/i';
