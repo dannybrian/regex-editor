@@ -4,7 +4,7 @@
   "description": "Generate color highlighting, optimization, and other features for regexes.",
   "main": "regex-highlighter.js",
   "scripts": {
-    "test": "ava tests/*.js"
+    "test": "ava --verbose tests/*.js"
   },
   "author": "Danny Brian",
   "license": "ISC",
