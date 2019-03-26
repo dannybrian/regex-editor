@@ -46,24 +46,32 @@ test('regex string parse with errors',  t => {
 });
 
 test('regex AST', t => {
-    const regexHL = regexHighlight({ regex: '/q(?!u)(\w+)[a-z]{1,}(?<hello>hello)/i' });
+    const regexHL = regexHighlight({ regex: '/q(?!u)(\\w+)[a-z]{1,}(?<hello>hello)/i' });
     t.true(regexHL.success);
     
-    // console.log(util.inspect(regexHL, { showHidden: false, depth: null, colors: true }))
-    
+    //console.log(util.inspect(regexHL.ast, { showHidden: false, depth: null, colors: true }));
+    //console.log(util.inspect(regexHL.array, { showHidden: false, depth: null, colors: true }));
+
 });
 
 test('AST chars', t => {
-     const regexHL = regexHighlight({ regex: '/\\u003B\\42\\x3Bq\\u{1F680}\\ud83d\\ude80❤️/u' });
-     t.is(regexHL.array[0], "<span class='char unicode'>\\u003B</span>");
-     t.is(regexHL.array[4], "<span class='char unicode'>\\u{1F680}</span>");
-     t.is(regexHL.array[6], "<span class='char simple'>❤</span>");
-     //console.log(regexHL.text);
-
+     const regexHL = regexHighlight({ regex: '/\\u003B\\42\\x3Bq\\u{1F680}\\ud83d\\ude80❤️/ui' });
+     t.is(regexHL.array[0].string, "\\u003B");
+     t.is(regexHL.array[0].kind, "unicode");
+     t.is(regexHL.array[6].kind, "simple");
+     t.is(regexHL.array[6].type, "Char");
+     t.is(regexHL.array[6].string, "❤");
+     t.is(regexHL.flags, "iu");
 });
 
 test('AST character class', t => {
-     const regexHL = regexHighlight({ regex: '/[a-z]+[^0-9]*/' });
-     console.log(regexHL.text);
-     console.log(util.inspect(regexHL.ast, { showHidden: false, depth: null, colors: true }));
+     const regexHL = regexHighlight({ regex: '/qq+w.[a-z]+[^0-9]*/' });
+     t.is(regexHL.array[5].string, "[a-z]");
+     t.is(regexHL.array[5].type, "CharacterClass");
+     t.is(regexHL.array[6].type, "Quantifier");
+     t.is(regexHL.array[6].string, "+");
+    
+     //console.log(util.inspect(regexHL.ast, { showHidden: false, depth: null, colors: true }));
+     // console.log(util.inspect(regexHL.array, { showHidden: false, depth: null, colors: true }));
 });
+

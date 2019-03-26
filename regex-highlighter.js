@@ -45,28 +45,60 @@ export const regexHighlight = ({
     ret.ast = ast;
     
     // I initially implemented this using regexpTree.traverse, but the visiting 
-    // didn't give me the pattern to properly filter; not everything needs 
-    // labeling, only certain key types (there's nothing to label for Alternative and
+    // pattern didn't help to properly filter; not everything needs labeling,
+    // only certain key types (there's nothing to label for Alternative and
     // Repetition, for example). So it works better to recurse the AST and just 
-    // label the stuff we care about.
+    // label the stuff we care about. This approach has the disadvantage that 
+    // I can't represent nesting of rules in the display (e.g. a character class 
+    // [a-z] will be represented without nodes for the individual characters),
+    // but I think that highlighting expressions is what is useful anyway.
     
-    ret.re = regexpTree.traverse(ast, {
-        Char({node}) {
-            textAr.push("<span class='char " + node.kind + "'>" + (node['escaped'] ? "\\" : "") + node.value + "</span>");
-        },
-        CharacterClass:  {
-            pre({node}) {
-              textAr.push("<span class='charclass " + node.type + "'>[" + (node['negative'] ? "^" : ""));
-            },
-            post({node}) {
-              textAr.push("]</span>");
-            }
-            
+    const traverseAST = node => {
+        let flat = [];
+        
+        if (node === undefined) return;
+
+        if (node['type'] === 'Char') {
+            flat.push({ type: 'Char', kind: node['kind'], string: node.loc.source });    
         }
-      },
-    );
-    ret.array = textAr;
+        
+        else if (node['type'] === 'Repetition' || node['type'] === 'Alternative') {
+            // we don't go any deeper in to the tree than an expression...
+            flat.push({ type: node.expression.type, string: node.expression.loc.source });
+            if (node['quantifier']) {
+                flat.push({ type: node.quantifier.type, string: node.quantifier.loc.source })
+                //expr = { ...expr, }
+            }
+        }
+        
+        else if (node['type'] === 'Assertion') { // FIXME: we should go deeper in the tree for these
+            flat.push({ type: node.type, kind: node.kind, string: node.loc.source });
+        }
+        
+        else if (node['type'] === 'Group') { // FIXME: we should definitely delve into groups
+            flat.push({ type: node.type, name: node.name, capturing: node.capturing, string: node.loc.source }); 
+            if (node['quantifier']) {
+                flat.push({ type: node.quantifier.type, string: node.quantifier.loc.source })
+                //expr = { ...expr, }
+            }
+        }
+        
+        else if (Array.isArray(node)) {
+            for (let i = 0; i < node.length; i++) {
+                flat.push(...traverseAST(node[i]));
+            }
+        }
+        
+        return flat;
+    };
+    
+    const makeHTML = array => {
+          
+    };
+    
+    ret.array = traverseAST(ast['body']['expressions']); // FIXME: will this always hold true?
     ret.text = textAr.join('');
+    ret.flags = ast['flags'] || '';
     return ret;
 };
 
