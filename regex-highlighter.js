@@ -43,7 +43,7 @@ export const regexHighlight = ({
     ret.success = true;
     ret.ast = ast;
     
-    console.log(util.inspect(ast, { showHidden: false, depth: null, colors: true }));
+    // console.log(util.inspect(ast, { showHidden: false, depth: null, colors: true }));
     
     // I initially implemented this using regexpTree.traverse, left it, and came
     // back. It's the right way if I want to highlight, say, stuff inside of an 
@@ -55,9 +55,13 @@ export const regexHighlight = ({
         else if (token['suffix']) { // we can only have one or the other
             token.html = `${token.suffix}</span>`;
         }
-        else
+        else if (token['string'])
         {
             token.html = `<span class='${token.type} ${token.kind || ''}'>${token.string}</span>`;
+        }
+        else
+        {
+            token.html = `<span class='${token.type} ${token.kind || ''}'>`;
         }
         return token;
     };
@@ -65,8 +69,13 @@ export const regexHighlight = ({
     let array = [];
     ret.re = regexpTree.traverse(ast, {
         
-        Alternative({node}) {
-            array.push(addHTML( { type: node.type, string: node.loc.source } ));
+        Alternative: {
+            pre({node}) {
+                array.push(addHTML( { type: node.type } ));
+            },
+            post({node}) {
+                array.push({ html: '</span>' });
+            }
         },
         Assertion: {
             pre({node}) {
@@ -150,12 +159,7 @@ export const regexHighlight = ({
     );
     
     ret.array = array;
-
-    const makeHTML = array => {
-          
-    };
-    
-    ret.text = array.join('');
+    ret.html = ret.array.map((token) => token.html).join('');
     ret.flags = ast['flags'] || '';
     return ret;
 };
