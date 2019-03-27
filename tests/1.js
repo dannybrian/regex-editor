@@ -46,11 +46,10 @@ test('regex string parse with errors',  t => {
 });
 
 test('regex AST', t => {
-    const regexHL = regexHighlight({ regex: '/q(?!u)(\\w+)[a-z]{1,}(?<hello>hello)/i' });
+    const regexHL = regexHighlight({ regex: '/^q(?!u)(\\w+)[a-z]{1,}(?<hello>hello)(a|bb{1,12})\\1\\b\\k<hello>$/i' });
     t.true(regexHL.success);
     
-    //console.log(util.inspect(regexHL.ast, { showHidden: false, depth: null, colors: true }));
-    //console.log(util.inspect(regexHL.array, { showHidden: false, depth: null, colors: true }));
+    console.log(util.inspect(regexHL.array, { showHidden: false, depth: null, colors: true }));
 
 });
 

@@ -1,3 +1,5 @@
+const util = require('util'); // dev only
+
 const regexpTree = require('regexp-tree');
 const errorRegex = new RegExp(/^SyntaxError:\s+(\/.+?\/)\s+\^\s+(Unexpected.+?):\s+"(.+?)"\s+at\s+(\d+):(\d+)\./, 'm');
 // Because the regexp-tree.js is generated, and I don't feel like 
@@ -39,65 +41,121 @@ export const regexHighlight = ({
     }
 
     ret.success = true;
-    let text = '';
-    let textAr = [];
-    
     ret.ast = ast;
     
-    // I initially implemented this using regexpTree.traverse, but the visiting 
-    // pattern didn't help to properly filter; not everything needs labeling,
-    // only certain key types (there's nothing to label for Alternative and
-    // Repetition, for example). So it works better to recurse the AST and just 
-    // label the stuff we care about. This approach has the disadvantage that 
-    // I can't represent nesting of rules in the display (e.g. a character class 
-    // [a-z] will be represented without nodes for the individual characters),
-    // but I think that highlighting expressions is what is useful anyway.
+    console.log(util.inspect(ast, { showHidden: false, depth: null, colors: true }));
     
-    const traverseAST = node => {
-        let flat = [];
-        
-        if (node === undefined) return;
-
-        if (node['type'] === 'Char') {
-            flat.push({ type: 'Char', kind: node['kind'], string: node.loc.source });    
+    // I initially implemented this using regexpTree.traverse, left it, and came
+    // back. It's the right way if I want to highlight, say, stuff inside of an 
+    // assertion or large group. Otherwise the highlighting isn't very useful.
+    const addHTML = token => {
+        if (token['prefix']) {
+            token.html = `<span class='${token.type} ${token.kind || ''}'>${token.prefix}`;
         }
-        
-        else if (node['type'] === 'Repetition' || node['type'] === 'Alternative') {
-            // we don't go any deeper in to the tree than an expression...
-            flat.push({ type: node.expression.type, string: node.expression.loc.source });
-            if (node['quantifier']) {
-                flat.push({ type: node.quantifier.type, string: node.quantifier.loc.source })
-                //expr = { ...expr, }
-            }
+        else if (token['suffix']) { // we can only have one or the other
+            token.html = `${token.suffix}</span>`;
         }
-        
-        else if (node['type'] === 'Assertion') { // FIXME: we should go deeper in the tree for these
-            flat.push({ type: node.type, kind: node.kind, string: node.loc.source });
+        else
+        {
+            token.html = `<span class='${token.type} ${token.kind || ''}'>${token.string}</span>`;
         }
-        
-        else if (node['type'] === 'Group') { // FIXME: we should definitely delve into groups
-            flat.push({ type: node.type, name: node.name, capturing: node.capturing, string: node.loc.source }); 
-            if (node['quantifier']) {
-                flat.push({ type: node.quantifier.type, string: node.quantifier.loc.source })
-                //expr = { ...expr, }
-            }
-        }
-        
-        else if (Array.isArray(node)) {
-            for (let i = 0; i < node.length; i++) {
-                flat.push(...traverseAST(node[i]));
-            }
-        }
-        
-        return flat;
+        return token;
     };
     
+    let array = [];
+    ret.re = regexpTree.traverse(ast, {
+        
+        Alternative({node}) {
+            array.push(addHTML( { type: node.type, string: node.loc.source } ));
+        },
+        Assertion: {
+            pre({node}) {
+                let rprefix;
+                if (node.kind === 'Lookahead')
+                {
+                    rprefix = node.negative ? '(?!' : '(?=';
+                }
+                else if (node.kind === 'Lookbehind')
+                {
+                    rprefix = node.negative ? '(?<!' : '(?<=';
+                }
+                else
+                {
+                    node.kind = node.kind === '^' ? 'AnchorFront' : // ^
+                             node.kind === '$' ? 'AnchorBack' : // $
+                             'WordBound'; // \\b, but includes \\B too! don't think it matters for highlighting..
+                 }
+                array.push(addHTML( { type: node.type, kind: node.kind, negative: node['negative'], string: rprefix ? rprefix : node.loc.source } ));
+            },
+            post({node}) {
+              array.push({ html: ")</span>" });
+            }
+        },
+        Backreference({node}) {
+            array.push(addHTML( { type: node.type, kind: node.kind, name: node['name'], number: node['number'], reference: node.reference, string: node.loc.source } ));
+        },
+        Char({node}) {
+            let token = { type: node.type, kind: node.kind, escaped: node['escaped'], string: node.loc.source };
+            if (node.append) {
+                token.html = node.append;
+            }
+            array.push(addHTML(token));
+        },
+        CharacterClass:  {
+            pre({node}) {
+                array.push(addHTML(
+                    { type: node.type, negative: node['negative'], string: node.loc.source, prefix: "[" }
+                ));
+            },
+            post({node}) {
+              array.push(addHTML( { suffix: "]" } ));
+            }
+        },
+        ClassRange: {
+            pre({node}) {
+                array.push({ type: node.type, kind: node.kind, html: `<span class='ClassRange'>` });
+            },
+            post({node}) {
+                array.splice(-1, 0, { type: node.type, html: '-' } );
+                array.push({ html: `</span>`});
+            }
+        },
+        Disjunction: {
+            pre({node}) {
+                array.push({ type: node.type, html: `<span class='Disjunction'>` } );
+                
+            },
+            post({node}) {
+                array.splice(-1, 0, { type: node.type, html: '-' } );
+                array.push({ html: `</span>`});
+            }
+        },
+        Group: {
+            pre({node}) {
+                let prefix;
+                prefix = node.capturing ? 
+                         (node.name ? `(?<${node.name}>` : '(')
+                          : '(?:';
+                
+                array.push( addHTML({ type: node.type, capturing: node.capturing, number: node.number, name: node.name, prefix: prefix  }) );
+            },
+            post({node}) {
+                array.push({ type: node.type, html: `)</span>`});
+            }
+        },
+        Quantifier({node}) {
+            array.push(addHTML( { type: node.type, kind: node.kind, greedy: node.greedy, string: `${node.loc.source}` } ));
+        }
+      },
+    );
+    
+    ret.array = array;
+
     const makeHTML = array => {
           
     };
     
-    ret.array = traverseAST(ast['body']['expressions']); // FIXME: will this always hold true?
-    ret.text = textAr.join('');
+    ret.text = array.join('');
     ret.flags = ast['flags'] || '';
     return ret;
 };
