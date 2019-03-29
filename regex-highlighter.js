@@ -2,6 +2,7 @@ const util = require('util'); // dev only
 
 const regexpTree = require('regexp-tree');
 const errorRegex = new RegExp(/^SyntaxError:\s+(\/.+?\/)\s+\^\s+(Unexpected.+?):\s+"(.+?)"\s+at\s+(\d+):(\d+)\./, 'm');
+
 // Because the regexp-tree.js is generated, and I don't feel like 
 // crawling into the source any more than I already have...
 // plus hey I'm using regexes for *everything* else, may as well parse
