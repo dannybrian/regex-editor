@@ -13,7 +13,7 @@ const errorRegex = new RegExp(/^SyntaxError:\s+(\/.+?\/)\s+\^\s+(Unexpected.+?):
 
 export const regexHighlight = ({
     regex = '',
-    type  = 'html' // html | term
+    type  = 'html' // html | term (term not implemented yet)
 }) => {
     
     let err = {}, ret = {}, ast = {};
@@ -31,13 +31,13 @@ export const regexHighlight = ({
     catch (err)
     {
         let matches = errorRegex.exec(err);
-        if (matches.length > 0) {
-            return { success: false, message: matches[2], pattern: matches[1],
-                     token: matches[3], line: matches[4], column: matches[5] };
+        if (matches && matches.length > 0) {
+            return { success: false, error: { message: matches[2], pattern: matches[1],
+                     token: matches[3], line: matches[4], column: matches[5] } };
         }
         else
         {
-            throw new RegexError ('Invalid regular expression, unknown error');        
+            throw new RegexError ('Invalid regular expression, unknown error: ' + err);        
         }
     }
 
@@ -136,7 +136,7 @@ export const regexHighlight = ({
                 
             },
             post({node}) {
-                array.splice(-1, 0, { type: node.type, html: '-' } );
+                array.splice(-1, 0, { type: node.type, html: '|' } );
                 array.push({ html: `</span>`});
             }
         },

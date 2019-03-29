@@ -17,4 +17,6 @@ regexHL.array; // a specialized list of tokens for generating the HTML
 
 `% npm test`
 
+## Build for Browser
 
+`% npm run build`

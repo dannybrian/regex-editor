@@ -1,7 +1,7 @@
 const util = require('util')
 
 import test from 'ava';
-import { regexHighlight, RegexError } from '../regex-highlighter';
+import { regexHighlight, RegexError } from '../src/regex-highlighter';
 
 test('import', t => {
   t.truthy(regexHighlight);
@@ -38,11 +38,11 @@ test('regex string parse with errors',  t => {
     // to be handled and displayed by the editor.
     const regexHL = regexHighlight({ regex: '/a|b++/' });
     t.false(regexHL.success);
-    t.is(regexHL['message'], 'Unexpected token');
-    t.is(regexHL['token'], '+');
-    t.is(regexHL['column'], '5');
-    t.is(regexHL['line'], '1');
-    t.is(regexHL['pattern'], '/a|b++/');
+    t.is(regexHL.error['message'], 'Unexpected token');
+    t.is(regexHL.error['token'], '+');
+    t.is(regexHL.error['column'], '5');
+    t.is(regexHL.error['line'], '1');
+    t.is(regexHL.error['pattern'], '/a|b++/');
 });
 
 test('regex AST', t => {
