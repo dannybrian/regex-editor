@@ -1,3 +1,5 @@
+@inputPadding: 4px;
+
 .regexContainer {
     font-family: 'Monaco', 'Source Sans Pro', sans-serif;
     font-size: 14px;
@@ -9,13 +11,13 @@
     height: 60px;
     border: 0.7px solid #aaa;
     border-radius: 4px;
-    padding: 4px;
+    padding: @inputPadding;
     font-weight: 400;
     
     .regexInputContainer, #regexInput, #regexBackground, #regexForeground {
         position: absolute;
         top: 0;
-        padding: 4px;
+        padding: @inputPadding;
         margin: 0;
         pointer-events: none;
         box-sizing: border-box;
@@ -29,7 +31,7 @@
     .regexPrefix, .regexSuffix {
         color: #aaa;
         position: absolute;
-        top: 4px;
+        top: @inputPadding;
     }
     
     .regexPrefix {
@@ -41,7 +43,17 @@
     }
     
     #regexInput {
-        opacity: 0;
+        color: rgba(0, 0, 0, 0);
+        caret-color: black;
+        border: none;
         pointer-events: all;
+        border: none;
+        overflow: auto;
+        outline: none;
+        box-shadow: none;
+        resize: none;
+        background-color: rgba(0, 0, 0, 0);
+        font-family: 'Monaco', 'Source Sans Pro', sans-serif;
+        font-size: 14px;
     }
 }
