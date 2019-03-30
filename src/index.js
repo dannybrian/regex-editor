@@ -4,12 +4,24 @@ const util = require('util')
 
 import { regexHighlight, RegexError } from '../src/regex-highlighter';
 
-let regexInputText = document.getElementById('regexInputText');
+let regexInput = document.getElementById('regexInput');
 let regexBackground = document.getElementById('regexBackground');
+let regexForeground = document.getElementById('regexForeground');
 
-regexInputText.addEventListener('keydown', e => {
-    let regexVal = regexInputText.value;
-    if (regexVal === '') { return; }
-    regexBackground.innerHTML = regexHighlight({ regex: regexVal }).html;
-});
+const inputChange = (e) => {
+    setTimeout(function() {
+        let regexVal = regexInput.value;
+        try {
+            let html = regexHighlight({ regex: '/' + regexVal + '/' }).html;
+            regexBackground.innerHTML = html ? html : regexVal;
+        }
+        catch (err) {
+            console.log('Regex error: ' + err);
+            regexBackground.innerHTML = regexVal;
+        }
+    }, 0);
+};
+
+regexInput.addEventListener('keydown', inputChange);
+regexInput.addEventListener('blur', inputChange);
 

@@ -4,13 +4,16 @@
     <meta charset="utf-8">
     <title>Page Title</title>
     <meta name="description" content="regex-highlighter">
-    <link rel="stylesheet" href="index.css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+    <link rel="stylesheet" href="bundle.css">
   </head>
   <body> 
-      <div id="regexContainer">
+      <div class="regexContainer">
+        <div class="regexPrefix">/</div>
+        <div class="regexSuffix">/</div>
         <div id="regexBackground"></div>
-        <div id="regexInput">
-          <textarea id="regexInputText"></textarea>
+        <div class="regexInputContainer">
+          <textarea id="regexInput" placeholder="regex goes here"></textarea>
         </div>
         <div id="regexForeground"></div>
       </div>
