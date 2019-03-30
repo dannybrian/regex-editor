@@ -91,6 +91,8 @@ As a rule, return data structures, `try/catch/finally` where you need to interce
 
 ### Developing
 
+I run the `ws` web server (Node's) in `web/`, but any ol' web server will do.
+
 Continuous watch/build tools like watchify are not pipe/redirection friendly, and I spent plenty of time trying. Watchman is a better tool IMO, and works for any use case. So run:
 
 ~~~~
