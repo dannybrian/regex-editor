@@ -1,0 +1,110 @@
+(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+var log = require('./ulog')
+var qs = location.search.substring(1),
+		args = qs && qs.split('&'),
+		lvl, dbg, i, m
+
+try {
+	lvl = localStorage.getItem('log')
+	dbg = localStorage.getItem('debug')
+} catch(e) {}
+
+for (i=0; m=args && args[i] && args[i].split('='); i++) {
+	m[0] == 'log' ? lvl = m[1] : 0
+	m[0] == 'debug' ? dbg = m[1] : 0
+}
+
+log.con = function(){return window.console && console}
+dbg && log.enable(dbg)
+var ulog = log()
+log.level = lvl || log.WARN
+
+module.exports = ulog
+
+},{"./ulog":2}],2:[function(require,module,exports){
+
+// ulog - microscopically small universal logging library
+// © 2017 by Stijn de Witt, some rights reserved
+// License: CC-BY-4.0
+
+function log(name){
+	return name
+		? (mods[name] ? mods[name] : (mods[name] = enhance({name:name}, log)))
+		: (log.debug ? log : enhance(log))
+}
+
+log.ulog = {version:'1.1.0'}
+
+log.enable = function(str) {
+	var i, split = (str || '').split(/[\s,]+/);
+	for (i=0; i<split.length; i++) {
+		if (split[i]) {
+			str = split[i].replace(/\*/g, '.*?')
+			if (str[0] === '-') skipMods.push(new RegExp('^' + str.substr(1) + '$'))
+			else dbgMods.push(new RegExp('^' + str + '$'))
+		}
+	}
+	for (i in mods) patch(mods[i])
+}
+
+log.enabled = function(name) {
+	var i;
+	for (i=0; i<skipMods.length; i++)
+		if (skipMods[i].test(name)) return
+	for (i=0; i<dbgMods.length; i++)
+		if (dbgMods[i].test(name)) {return true}
+}
+
+log.disable = log.enable.bind(log, '')
+
+var LVL = {ERROR:1, WARN:2, INFO:3, LOG:4, DEBUG:5, TRACE:6},
+		names = Object.keys(LVL).map(function(x){return x.toLowerCase()}),
+		mods = {}, dbgMods = [], skipMods = []
+
+function enhance(o, parent, level) {
+	o.NONE = 0
+	for (var key in LVL) {o[key] = LVL[key]}
+	Object.defineProperty(o, 'level', {
+		get: function(){return level !== undefined ? level : parent && parent.level},
+		set: function(n) {
+			if ((n === undefined) && parent) {level = undefined}
+			else {
+				var lvl = n && (Number(n)!==Number(n) ? o[n.toUpperCase()] : Number(n))
+				if (lvl >= 0 && lvl <= 6) {level = lvl}
+			}
+			patch(o)
+			if (!parent) {for (mod in mods) {patch(mods[mod])}}
+		}
+	})
+	patch(o, parent)
+	o.dir =  bnd('dir') || nop
+	o.table = bnd('table') || nop
+	o.time = bnd('time') || nop
+	o.timeEnd = bnd('timeEnd') || nop
+	// makes Node behave like browsers 
+	o.assert = typeof window == 'object' && bnd('assert') || function(){
+		var a=[].concat.apply([], arguments), ok=a.shift()
+		if (!ok) {o.error.apply(o, a)}
+	}
+	return o
+}
+
+function patch(o) {
+	var lvl = Math.max(o.name && log.enabled(o.name) && o.DEBUG || o.level, o.level)
+	for (var i=0,name; name=names[i]; i++) {
+		o[name] = lvl <= i
+			? nop
+			: (
+				bnd(name) ||
+				(typeof print == 'function' && print) ||
+				nop
+			)
+	}
+}
+
+function bnd(n,c){return (c = log.con()) && (c[n]||c.log).bind(c)}
+function nop(){}
+
+module.exports = log
+
+},{}]},{},[1]);

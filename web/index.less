@@ -1,49 +1,47 @@
 .regexContainer {
-  font-family: 'Monaco', 'Source Sans Pro', sans-serif;
-  font-size: 14px;
-  box-sizing: border-box;
-  position: relative;
-  margin-top: 20px;
-  margin-left: 20px;
-  width: 400px;
-  height: 60px;
-  border: 0.7px solid #aaa;
-  border-radius: 4px;
-  padding: 4px;
-  font-weight: 400;
-}
-.regexContainer .regexInputContainer,
-.regexContainer #regexInput,
-.regexContainer #regexBackground,
-.regexContainer #regexForeground {
-  position: absolute;
-  top: 0;
-  padding: 4px;
-  margin: 0;
-  pointer-events: none;
-  box-sizing: border-box;
-  width: 400px;
-  height: 60px;
-}
-.regexContainer .regexInputContainer .regex .delim,
-.regexContainer #regexInput .regex .delim,
-.regexContainer #regexBackground .regex .delim,
-.regexContainer #regexForeground .regex .delim {
-  color: #aaa;
-}
-.regexContainer .regexPrefix,
-.regexContainer .regexSuffix {
-  color: #aaa;
-  position: absolute;
-  top: 4px;
-}
-.regexContainer .regexPrefix {
-  left: -16px;
-}
-.regexContainer .regexSuffix {
-  right: -16px;
-}
-.regexContainer #regexInput {
-  opacity: 0;
-  pointer-events: all;
+    font-family: 'Monaco', 'Source Sans Pro', sans-serif;
+    font-size: 14px;
+    box-sizing: border-box;
+    position: relative;
+    margin-top: 20px;
+    margin-left: 20px;
+    width: 400px;
+    height: 60px;
+    border: 0.7px solid #aaa;
+    border-radius: 4px;
+    padding: 4px;
+    font-weight: 400;
+    
+    .regexInputContainer, #regexInput, #regexBackground, #regexForeground {
+        position: absolute;
+        top: 0;
+        padding: 4px;
+        margin: 0;
+        pointer-events: none;
+        box-sizing: border-box;
+        width: 400px;
+        height: 60px;
+        .regex .delim {
+            color: #aaa;
+        }
+    }
+    
+    .regexPrefix, .regexSuffix {
+        color: #aaa;
+        position: absolute;
+        top: 4px;
+    }
+    
+    .regexPrefix {
+        left: -16px;
+    }
+    
+    .regexSuffix {
+        right: -16px;
+    }
+    
+    #regexInput {
+        opacity: 0;
+        pointer-events: all;
+    }
 }

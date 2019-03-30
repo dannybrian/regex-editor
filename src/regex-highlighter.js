@@ -1,6 +1,8 @@
 const util = require('util'); // dev only
-
+const ulog = require('ulog');
 const regexpTree = require('regexp-tree');
+
+const log = ulog('rexeg-highlighter');
 const errorRegex = new RegExp(/^SyntaxError:\s+(\/.+?\/)\s+\^\s+(Unexpected.+?):\s+"(.+?)"\s+at\s+(\d+):(\d+)\./, 'm');
 
 // Because the regexp-tree.js is generated, and I don't feel like 
@@ -10,6 +12,8 @@ const errorRegex = new RegExp(/^SyntaxError:\s+(\/.+?\/)\s+\^\s+(Unexpected.+?):
 
 // regexHighlight: ({regex:String, type?:String}) => String
 // IMPORTANT: the regex into needs to be a string
+
+log.level = log.DEBUG;
 
 export const regexHighlight = ({
     regex = '',
@@ -27,6 +31,7 @@ export const regexHighlight = ({
 
     try {
         ast = regexpTree.parse(regex, { captureLocations: true });
+        log.debug(ast);
     }
     catch (err)
     {
@@ -70,6 +75,18 @@ export const regexHighlight = ({
     let array = [];
     ret.re = regexpTree.traverse(ast, {
         
+        /* man this is such a well-designed API, I just want to say; should keep this 
+           visitor pattern in mind, it's like SAX but so much easier... */
+        
+        '*': function(node) {
+          if (node.property === 'right') {
+              // splice the pipe (disjunction or)   
+              
+              array.splice(-1, 0, { type: node.type, html: '|' } );
+          }
+          // console.log("PROPERTY: " + node.property + ",  TYPE: " + node.node.type);  
+        },
+        
         Alternative: {
             pre({node}) {
                 array.push(addHTML( { type: node.type } ));
@@ -104,12 +121,15 @@ export const regexHighlight = ({
         Backreference({node}) {
             array.push(addHTML( { type: node.type, kind: node.kind, name: node['name'], number: node['number'], reference: node.reference, string: node.loc.source } ));
         },
-        Char({node}) {
+        Char(node) {
+            node = node.node;
+            
             let token = { type: node.type, kind: node.kind, escaped: node['escaped'], string: node.loc.source };
             if (node.append) {
                 token.html = node.append;
             }
             array.push(addHTML(token));
+            
         },
         CharacterClass:  {
             pre({node}) {
@@ -126,17 +146,15 @@ export const regexHighlight = ({
                 array.push({ type: node.type, kind: node.kind, html: `<span class='ClassRange'>` });
             },
             post({node}) {
-                array.splice(-1, 0, { type: node.type, html: '-' } );
+                //array.splice(-1, 0, { type: node.type, html: '-' } );
                 array.push({ html: `</span>`});
             }
         },
         Disjunction: {
             pre({node}) {
                 array.push({ type: node.type, html: `<span class='Disjunction'>` } );
-                
             },
             post({node}) {
-                array.splice(-1, 0, { type: node.type, html: '|' } );
                 array.push({ html: `</span>`});
             }
         },
