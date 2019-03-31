@@ -76,3 +76,15 @@ test('AST character classes', t => {
      // console.log(util.inspect(regexHL.array, { showHidden: false, depth: null, colors: true }));
 });
 
+test('error parsing edge case', t => {
+    const regexHL = regexHighlight({ regex: '/a|b(ac)//' });
+    t.false(regexHL.success);
+    t.is(regexHL.error['message'], 'Unexpected token');
+    t.is(regexHL.error['token'], '/');
+    t.is(regexHL.error['column'], '9');
+    t.is(regexHL.error['line'], '1');
+    t.is(regexHL.error['pattern'], '/a|b(ac)//');
+    
+});
+
+// ^(a|b)\/+(?<V>hi\b)(?=ab|cde)\1\x{1234}$

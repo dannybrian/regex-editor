@@ -1,4 +1,5 @@
 @inputPadding: 4px;
+@inputWidth: 600px;
 
 .regexContainer {
     font-family: 'Monaco', 'Source Sans Pro', sans-serif;
@@ -7,12 +8,21 @@
     position: relative;
     margin-top: 20px;
     margin-left: 20px;
-    width: 400px;
+    width: @inputWidth;
     height: 60px;
     border: 0.7px solid #aaa;
     border-radius: 4px;
     padding: @inputPadding;
-    font-weight: 400;
+    font-weight: 300;
+    background-color: #ffebef;
+    
+    &.success {
+        background-color: #fff;
+    }
+    
+    #regexForeground { z-index: 30; }
+    #regexInput { z-index: 20; }
+    #regexBackground { z-index: 10 };
     
     .regexInputContainer, #regexInput, #regexBackground, #regexForeground {
         position: absolute;
@@ -21,13 +31,14 @@
         margin: 0;
         pointer-events: none;
         box-sizing: border-box;
-        width: 400px;
-        height: 60px;
+        min-width: @inputWidth;
+        min-height: 60px;
+        white-space:pre-line;
         .regex .delim {
             color: #aaa;
         }
     }
-    
+        
     .regexPrefix, .regexSuffix {
         color: #aaa;
         position: absolute;
@@ -42,6 +53,7 @@
         right: -16px;
     }
     
+    /* make our text area transparent except for the cursor */
     #regexInput {
         color: rgba(0, 0, 0, 0);
         caret-color: black;
@@ -55,5 +67,53 @@
         background-color: rgba(0, 0, 0, 0);
         font-family: 'Monaco', 'Source Sans Pro', sans-serif;
         font-size: 14px;
+        left: 1px;
+        &::placeholder {
+            color: #ccc;
+        }
     }
+    
+    /* regex-specific markup, e.g. colors */
+    
+    #regexBackground {
+        .Assertion {
+            background-color: rgba(244, 217, 255, 0.65);
+        }
+        .Backreference {
+            background-color: rgba(194, 255, 199, 0.8);
+        }
+        .Char {
+            background-color: rgba(255, 255, 255, 0.4);
+            &.unicode {
+                background-color: rgba(255, 0, 51, 0.2);   
+            }
+        }
+        .Disjunction {
+            /* my thinking here was that it's cool to let the colors stack */
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        .DisjunctionMetaChar {
+            background-color: rgba(180, 255, 255, 0.4);
+        }
+        .Group {
+            background-color: rgba(194, 255, 199, 0.9);
+        }
+        .Quantifier {
+            background-color: rgba(253, 222, 185, 0.72);
+        }
+        .ClassRange {
+            background-color: rgba(255, 204, 185, 0.66);
+        }
+        .CharacterClass {
+            background-color: rgba(250, 215, 215, 0.49);
+        }
+    }
+    
+    #regexForeground {
+        color: #aaa;
+        .DisjunctionMetaChar, .Assertion, .Group, .Quantifier, .Backreference {
+            color: #000;
+        }
+    }
+
 }
