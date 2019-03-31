@@ -65,9 +65,9 @@ test('AST chars', t => {
 
 test('AST character classes', t => {
      const regexHL = regexHighlight({ regex: '/qq+w.[a-z]+[^0-9]*/' });
-     // console.log(util.inspect(regexHL.array, { showHidden: false, depth: null, colors: true }));
-     
-     t.is(regexHL.array[6].string, "[a-z]");
+     //console.log(util.inspect(regexHL.array, { showHidden: false, depth: null, colors: true }));
+     t.true(regexHL.success);
+     // t.is(regexHL.array[6].string, "[a-z]"); // we stopped adding {string}
      t.is(regexHL.array[6].type, "CharacterClass");
      t.is(regexHL.array[13].type, "Quantifier");
      t.is(regexHL.array[13].string, "+");
