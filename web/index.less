@@ -3,6 +3,27 @@
 @inputHeight: 50px;
 @regexFontSize: 12px;
 
+/* demo styles, not needed for regex use */
+
+html {
+  box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+body {
+  margin: 64px 64px;
+  font-size: 100%;
+  max-width: 1200px;
+  width: 94%;
+}
+
+/* regex styles */
+
 .regexTopContainer {
     box-sizing: border-box;
     position: relative;
@@ -114,7 +135,10 @@
         .Char {
             background-color: #ffffff;
             &.unicode {
-                background-color: #ffe1e7;   
+                background-color: #ffe1e7;
+            }
+            &.meta {
+                background-color: #fcffe1;
             }
         }
         .Disjunction {
@@ -127,6 +151,9 @@
             background-color: #c2ffc7;
             .Char {
                 background-color: rgba(255, 255, 255, 0.3);
+                &.meta {
+                    background-color: rgba(252, 255, 225, 0.49);
+                }
             }
             .Named {
                 background-color: #d6eeff;

@@ -188,7 +188,7 @@ export const regexHighlight = ({
         CharacterClass:  {
             pre({node}) {
                 array.push(addHTML(
-                    { type: node.type, negative: node['negative'], string: node.loc.source, prefix: "[" }
+                    { type: node.type, negative: node['negative'], prefix: "[" }
                 ));
             },
             post({node}) {
@@ -197,10 +197,9 @@ export const regexHighlight = ({
         },
         ClassRange: {
             pre({node}) {
-                array.push({ type: node.type, kind: node.kind, html: `<span class='ClassRange'>` });
+                array.push({ type: node.type, kind: node.kind, html: `<span  class='ClassRange'>` });
             },
             post({node}) {
-                //array.splice(-1, 0, { type: node.type, html: '-' } );
                 array.push({ html: `</span>`});
             }
         },
@@ -250,7 +249,7 @@ export const regexHighlight = ({
                         array.push( addHTML({ type: node.type, kind: 'Named', 
                                              number: node.number, prefix: prefix }) );
                         array.push( { type: node.type,
-                                      html: `<span class='Group Named'>&lt;<span class='CaptureName'>${node.name}</span>&gt;</span>`
+                                      html: `<span data-tooltip="Class Range" class='Group Named'>&lt;<span class='CaptureName'>${node.name}</span>&gt;</span>`
                                     } );
                         return;
                     }
