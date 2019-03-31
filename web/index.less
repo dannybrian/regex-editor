@@ -1,5 +1,31 @@
 @inputPadding: 4px;
-@inputWidth: 600px;
+@inputWidth: 500px;
+@inputHeight: 50px;
+
+.regexTopContainer {
+    box-sizing: border-box;
+    position: relative;
+    margin: 10px;
+    
+    width: @inputWidth + 30;
+    height: @inputHeight + 10;
+    
+    .regexPrefix, .regexSuffix {
+        color: #aaa;
+        font-size: 24px;
+        position: absolute;
+        top: @inputPadding;
+    }
+    
+    .regexPrefix {
+        left: -2px;
+    }
+    
+    .regexSuffix {
+        right: 4px;
+    }
+
+}
 
 .regexContainer {
     font-family: 'Monaco', 'Source Sans Pro', sans-serif;
@@ -7,9 +33,11 @@
     box-sizing: border-box;
     position: relative;
     margin-top: 20px;
-    margin-left: 20px;
+    margin-left: 12px;
     width: @inputWidth;
-    height: 60px;
+    height: @inputHeight;
+    overflow-x: hidden;
+    overflow-y: scroll;
     border: 0.7px solid #aaa;
     border-radius: 4px;
     padding: @inputPadding;
@@ -26,33 +54,21 @@
     
     .regexInputContainer, #regexInput, #regexBackground, #regexForeground {
         position: absolute;
+        display: inline-block;
         top: 0;
         padding: @inputPadding;
         margin: 0;
         pointer-events: none;
         box-sizing: border-box;
-        min-width: @inputWidth;
-        min-height: 60px;
-        white-space:pre-line;
+        min-width: 100%;
+        max-width: 100%;
+        min-height: 300%;
+        overflow:hidden;
         .regex .delim {
             color: #aaa;
         }
     }
-        
-    .regexPrefix, .regexSuffix {
-        color: #aaa;
-        position: absolute;
-        top: @inputPadding;
-    }
-    
-    .regexPrefix {
-        left: -16px;
-    }
-    
-    .regexSuffix {
-        right: -16px;
-    }
-    
+
     /* make our text area transparent except for the cursor */
     #regexInput {
         color: rgba(0, 0, 0, 0);
@@ -68,6 +84,7 @@
         font-family: 'Monaco', 'Source Sans Pro', sans-serif;
         font-size: 14px;
         left: 1px;
+        overflow: hidden;
         &::placeholder {
             color: #ccc;
         }
@@ -77,42 +94,66 @@
     
     #regexBackground {
         .Assertion {
-            background-color: rgba(244, 217, 255, 0.65);
+            background-color: #fcb7ff;
+            .Char {
+                background-color: rgba(255, 255, 255, 0.3);
+            }
+            &.AnchorFront {
+                background-color: rgb(90, 90, 90);
+            }
+            &.AnchorBack {
+                background-color: rgb(90, 90, 90);
+            }
         }
         .Backreference {
-            background-color: rgba(194, 255, 199, 0.8);
+            background-color: #c2ffc7;
         }
         .Char {
-            background-color: rgba(255, 255, 255, 0.4);
+            background-color: #ffffff;
             &.unicode {
-                background-color: rgba(255, 0, 51, 0.2);   
+                background-color: #ffe1e7;   
             }
         }
         .Disjunction {
-            /* my thinking here was that it's cool to let the colors stack */
-            background-color: rgba(255, 255, 255, 0.3);
+            /* background-color: inherit; */
         }
         .DisjunctionMetaChar {
-            background-color: rgba(180, 255, 255, 0.4);
+            background-color: rgba(180, 255, 255, 0.67);
         }
         .Group {
-            background-color: rgba(194, 255, 199, 0.9);
+            background-color: #c2ffc7;
+            .Char {
+                background-color: rgba(255, 255, 255, 0.3);
+            }
+            .Named {
+                background-color: #d6eeff;
+            }
         }
         .Quantifier {
-            background-color: rgba(253, 222, 185, 0.72);
+            background-color: #ffcf97;
+            
         }
         .ClassRange {
-            background-color: rgba(255, 204, 185, 0.66);
+            background-color: #fad7d7;
         }
         .CharacterClass {
-            background-color: rgba(250, 215, 215, 0.49);
+            background-color: #fad7d7;
+            .Char {
+                background-color: inherit;
+            }
         }
     }
     
     #regexForeground {
-        color: #aaa;
+        color: #666;
         .DisjunctionMetaChar, .Assertion, .Group, .Quantifier, .Backreference {
             color: #000;
+        }
+        .AnchorFront, .AnchorBack {
+            color: #fff;
+        }
+        .CaptureName {
+            color: #60a7c4;
         }
     }
 

@@ -27,7 +27,7 @@ const escapeHTML = (unsafe) => {
 // regexHighlight: ({regex:String, type?:String}) => String
 // IMPORTANT: the regex into needs to be a string
 
-log.level = log.DEBUG;
+log.level = log.WARN;
 
 export const regexHighlight = ({
     regex = '',
@@ -70,6 +70,7 @@ export const regexHighlight = ({
 
     ret.success = true;
     ret.ast = ast;
+    ret.regexString = regex;
     
     // console.log(util.inspect(ast, { showHidden: false, depth: null, colors: true }));
     
@@ -91,24 +92,27 @@ export const regexHighlight = ({
     // provide display markup inside the {html} property, which we won't touch here.
     
     const addHTML = token => {
+        if (token['html']) {
+            log.warn('addHTML token already has {html}..');
+        }
+        
+        token.html = '';
         if (token['prefix']) {
-            token.html = `<span class='${token.type} ${token.kind || ''}'>${escapeHTML(token.prefix)}`;
+            token.html += `<span class='${token.type} ${token.kind || ''}'  >${escapeHTML(token.prefix)}`;
         }
-        else if (token['suffix']) { // we can only have one or the other
-            token.html = `${escapeHTML(token.suffix)}</span>`;
-        }
-        else if (token['string'])
+        if (token['string'])
         {
-            token.html = `<span class='${token.type} ${token.kind || ''}'>${escapeHTML(token.string)}</span>`;
+            token.html += `<span class='${token.type} ${token.kind || ''}'>${escapeHTML(token.string)}</span>`;
         }
-        else
-        {
-            token.html = `<span class='${token.type} ${token.kind || ''}'>`;
+        if (token['suffix']) { // we can only have one or the other
+            token.html += escapeHTML(token.suffix);
         }
+        
         return token;
     };
     
     let array = [];
+    let disjunctBool = false;
     ret.re = regexpTree.traverse(ast, {
         
         /* man this is such a well-designed API, I just want to say; should keep this 
@@ -123,33 +127,16 @@ export const regexHighlight = ({
               // splice the pipe (disjunction or)
               array.push( { type: node.node.type, html: '<span class="DisjunctionMetaChar">|</span>' } );
             }
-            else if (node.property === 'left') {
-              /* HOWEVER .. :) there is the case where we haven't yet provided anything 
-                 to the right of the pipe, but the parser still knows we've provided the 
-                 left, and anything can come to the left; consider:
-                 
-                 PROPERTY: body, TYPE: Disjunction
-                 PROPERTY: left, TYPE: Group
-                 PROPERTY: expression, TYPE: Alternative
-                 PROPERTY: expressions, TYPE: Char
-
-                 So the challenge here was, how to know to insert the pipe char after 
-                 the expressions above (which are technical part of the GROUP, which
-                 is part of the Disjunction). That is, it still parses, just without 
-                 the disjunction resolved. I solve this ug-ily by seeing if the 
-                 parent node has a {right} and if not, put 
-                 */   
-            }
             
             log.debug("Node PROPERTY: " + node.property + ",  TYPE: " + node.node.type);
         },
         
         Alternative: {
             pre({node}) {
-                array.push(addHTML( { type: node.type } ));
+                array.push({ type: node.type, html: '<span class="Alternative">' });
             },
             post({node}) {
-                array.push({ html: '</span>' });
+                array.push({ type: node.type, html: '</span>' });
             }
         },
         Assertion: {
@@ -194,9 +181,7 @@ export const regexHighlight = ({
             
             let token = { type: node.type, kind: node.kind, escaped: node['escaped'], 
                           string: node.loc.source };
-            if (node.append) {
-                token.html = node.append;
-            }
+                
             array.push(addHTML(token));
             
         },
@@ -207,7 +192,7 @@ export const regexHighlight = ({
                 ));
             },
             post({node}) {
-              array.push(addHTML( { suffix: "]" } ));
+                array.push({ type: node.type, html: "]" });
             }
         },
         ClassRange: {
@@ -224,18 +209,64 @@ export const regexHighlight = ({
                 array.push({ type: node.type, html: `<span class='Disjunction'>` } );
             },
             post({node}) {
-                array.push({ html: `</span>`});
+                 /* there is an edge case where the user hasn't yet provided anything 
+                 to the right of the pipe, but the parser still knows we've provided the 
+                 left, and anything can come to the left; consider:
+                 
+                 PROPERTY: body, TYPE: Disjunction
+                 PROPERTY: left, TYPE: Group
+                 PROPERTY: expression, TYPE: Alternative
+                 PROPERTY: expressions, TYPE: Char
+
+                 That is, it's a "proper" parse but it doesn't include the pipe.
+                 
+                 So the challenge here was, how to know to insert the pipe char after 
+                 the expressions above (which are technical part of the GROUP, which
+                 is part of the Disjunction). That is, it still parses, just without 
+                 the disjunction resolved. I solve this ug-ily by seeing if the 
+                 parent node has a {right} and if not, see if the last char is a pipe,
+                 and add it if so. FIXME this is so hacky.. */
+                
+                if (node['left'] && !node['right']) {
+                    // log.debug('Disjunction missing right...');
+                    if (ret.regexString.substr(-2, 1) === '|') {
+                        array.push( { type: node.type, html: '<span class="DisjunctionMetaChar">|</span>' } );
+                    }
+                }
+                else
+                {
+                    array.push({ type: node.type, html: '</span>'});
+                }
             }
         },
         Group: {
             pre({node}) {
-                let prefix;
-                prefix = node.capturing ? 
-                         (node.name ? `(?<${node.name}>` : '(')
-                          : '(?:';
+                let prefix, suffix;
+                if (node.capturing) {
+                    if (node['name']) {
+                        // one-off to format this ourselves, it's
+                        // more complex than the others
+                        prefix = '(?';
+                        array.push( addHTML({ type: node.type, kind: 'Named', 
+                                             number: node.number, prefix: prefix }) );
+                        array.push( { type: node.type,
+                                      html: `<span class='Group Named'>&lt;<span class='CaptureName'>${node.name}</span>&gt;</span>`
+                                    } );
+                        return;
+                    }
+                    else
+                    {
+                        prefix = '(';
+                    }
+                }
+                else
+                {
+                    prefix = '(?:';
+                }
                 
                 array.push( addHTML({ type: node.type, capturing: node.capturing,
-                            number: node.number, name: node.name, prefix: prefix  }) );
+                            number: node.number, name: node.name, prefix: prefix,
+                            suffix: suffix }) );
             },
             post({node}) {
                 array.push({ type: node.type, html: `)</span>`});

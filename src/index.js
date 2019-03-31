@@ -8,7 +8,7 @@ import ulog from 'ulog';
 const log = ulog('regex');
 window.log = log;
 
-log.level = log.DEBUG;
+log.level = log.WARN;
 
 const escapeHTML = (unsafe) => {
     return unsafe
@@ -30,7 +30,7 @@ const inputChange = (e) => {
     setTimeout(function() {
         let regexVal = regexInput.value; // the raw input, which we don't change
         try {
-            let regex = regexHighlight({ regex: '/' + regexVal + '/ugi' });
+            let regex = regexHighlight({ regex: '/' + regexVal + '/' });
             // log.trace(regex.array);
             // remember that regex.html now contains escaped regex with normal
             // HTML markup
@@ -57,6 +57,7 @@ const inputChange = (e) => {
                 log.warn('Unknown regex parse error' + err); // FIXME: not clear what above is causing err to not be caught here...
             }
             regexBackground.innerHTML = escapeHTML(regexVal);
+            regexForeground.innerHTML = escapeHTML(regexVal);
         }
     }, 0);
 };

@@ -19,6 +19,7 @@
     "butternut": "^0.4.6",
     "esmify": "^2.1.1",
     "less": "^3.9.0",
+    "node-html-parser": "^1.1.13",
     "node-notifier-cli": "^1.1.2"
   },
   "ava": {
