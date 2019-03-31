@@ -40,6 +40,8 @@ const inputChange = (e) => {
                 }
                 regexContainer.classList.add('success');
                 let escapedHTMLVal = regex.html;
+                // FIXME: wrapping, we probably should do this:
+                // https://stackoverflow.com/questions/499137/css-how-can-i-force-a-long-string-without-any-blank-to-be-wrapped-in-xul-and
                 regexBackground.innerHTML = escapedHTMLVal;
                 regexForeground.innerHTML = escapedHTMLVal;
             }

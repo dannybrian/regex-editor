@@ -1,6 +1,7 @@
 @inputPadding: 4px;
 @inputWidth: 500px;
 @inputHeight: 50px;
+@regexFontSize: 12px;
 
 .regexTopContainer {
     box-sizing: border-box;
@@ -29,7 +30,7 @@
 
 .regexContainer {
     font-family: 'Monaco', 'Source Sans Pro', sans-serif;
-    font-size: 14px;
+    font-size: @regexFontSize;
     box-sizing: border-box;
     position: relative;
     margin-top: 20px;
@@ -64,6 +65,7 @@
         max-width: 100%;
         min-height: 300%;
         overflow:hidden;
+        word-wrap: ;
         .regex .delim {
             color: #aaa;
         }
@@ -82,11 +84,12 @@
         resize: none;
         background-color: rgba(0, 0, 0, 0);
         font-family: 'Monaco', 'Source Sans Pro', sans-serif;
-        font-size: 14px;
+        font-size: @regexFontSize;
         left: 1px;
         overflow: hidden;
         &::placeholder {
             color: #ccc;
+            font-size: @regexFontSize;
         }
     }
     

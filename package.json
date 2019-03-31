@@ -8,7 +8,7 @@
     "test": "ava --verbose tests/*.js",
     "build-js": "browserify --debug src/index.js -p esmify > web/bundle.js ; [[ ${PIPESTATUS[0]} -eq 0 ]] && [[ ${PIPESTATUS[1]} -eq 0 ]] || notify -t 'JS Build Error' -m 'Browserify encountered a build error.' -x false;",
     "build-css": "find web/ -name '*.less' -print0 | xargs -0 -n1 -I '{}' lessc {} web/bundle.css || notify -t 'CSS Build Error' -m 'Less encountered a build error.' -x false",
-    "build-prod": "squash web/bundle.js -o web/bundle.min.js -m"
+    "build-prod": "squash web/bundle.js -o web/bundle.min.js"
   },
   "author": "Danny Brian",
   "license": "ISC",
