@@ -4,7 +4,7 @@ import test from 'ava';
 import { regexHighlight, RegexError } from '../src/regex-highlighter';
 
 const escapeRegExp = (string) => {
-  return String.raw`{$string}`.replace(/\\/g, '\\\\');
+  return String.raw`${string}`.replace(/\\/, '\\\\', 'g');
 };
 
 test('import', t => {
@@ -12,11 +12,26 @@ test('import', t => {
 });
 
 test('well-formed HTML', t => {
-    let regex = escapeRegExp('(?:[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])'); // escape 's here ^
-    
-    const regexHL = regexHighlight({ regex: '/' + regex + '/' });
+    const regex = '/' + escapeRegExp('[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}') + '/';
+    const regexHL = regexHighlight({ regex: regex });
     t.true(regexHL.success);
     let root = parse(regexHL.html);
     t.truthy(root);
 });
 
+test('token categorizations', t => {
+    // FIXME: unicode escapes don't work well here, at least not the \x{0000} style
+    const regex = ('/^(a|b)\\/+(?<V>hi\b)(?=ab|cde)\\1\k<V>.\u0000([a-z0-9]*?|bb{1,12})$/u');
+    const regexHL = regexHighlight({ regex: regex });
+    t.true(regexHL.success);
+    let root = parse(regexHL.html);
+    t.truthy(root);
+    t.is(root.querySelectorAll('.Char').length, 23); // actually 36, but 23 shallow search
+    // NOTE: this doesn't do a deep query, so it will not match what you get
+    // from a browser's document.querySelectorAll; I'm only using it here as a
+    // quick test case...
+    t.is(root.querySelectorAll('.Backreference').length, 1); // actually 2, but 1 shallow
+    // So these querySelector tests are pretty brittle.
+    
+    // console.log(util.inspect(regexHL.array, { showHidden: false, depth: null, colors: true }));
+});

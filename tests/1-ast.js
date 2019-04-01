@@ -87,4 +87,4 @@ test('error parsing edge case', t => {
     
 });
 
-// ^(a|b)\/+(?<V>hi\b)(?=ab|cde)\1\x{1234}$
+// ^(a|b)\/+(?<V>hi\b)(?=ab|cde)\1\x{1234}\1\k<V>.([a-z0-9]*?|bb{1,12})$d

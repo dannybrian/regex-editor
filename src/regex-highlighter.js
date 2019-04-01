@@ -105,7 +105,7 @@ export const regexHighlight = ({
             token.html += `<span class='${token.type} ${token.kind || ''}'>${escapeHTML(token.string)}</span>`;
         }
         if (token['suffix']) { // we can only have one or the other
-            token.html += escapeHTML(token.suffix);
+            token.html += escapeHTML(token.suffix) + '</span>';
         }
         
         return token;
@@ -192,7 +192,7 @@ export const regexHighlight = ({
                 ));
             },
             post({node}) {
-                array.push({ type: node.type, html: "]" });
+                array.push(addHTML( { type: node.type, suffix: "]" } ));
             }
         },
         ClassRange: {
@@ -200,7 +200,7 @@ export const regexHighlight = ({
                 array.push({ type: node.type, kind: node.kind, html: `<span  class='ClassRange'>` });
             },
             post({node}) {
-                array.push({ html: `</span>`});
+                array.push({ type: node.type, html: `</span>`});
             }
         },
         Disjunction: {
@@ -249,7 +249,7 @@ export const regexHighlight = ({
                         array.push( addHTML({ type: node.type, kind: 'Named', 
                                              number: node.number, prefix: prefix }) );
                         array.push( { type: node.type,
-                                      html: `<span data-tooltip="Class Range" class='Group Named'>&lt;<span class='CaptureName'>${node.name}</span>&gt;</span>`
+                                      html: `<span class='Group Named'>&lt;<span class='CaptureName'>${node.name}</span>&gt;</span>`
                                     } );
                         return;
                     }
