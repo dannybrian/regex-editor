@@ -74,7 +74,7 @@ export const regexHighlight = ({
     
     // console.log(util.inspect(ast, { showHidden: false, depth: null, colors: true }));
     
-    // I initially implemented this using regexpTree.traverse, left it, and came
+    // I initially implemented addHTML() using regexpTree.traverse, left it, and came
     // back. It's the right way if I want to highlight, say, stuff inside of an 
     // assertion or large group. Otherwise the highlighting isn't very useful.
     
@@ -90,6 +90,9 @@ export const regexHighlight = ({
     // I did this only so I wouldn't have to write <span> so many times. NONE of these
     // properties should do their own escaping of markup content, and should only
     // provide display markup inside the {html} property, which we won't touch here.
+    
+    // FIXME: in retrospect this isn't very useful, with so many one-offs required in the
+    // handlers below. Get rid of it. And the above justification. :-O
     
     const addHTML = token => {
         if (token['html']) {
@@ -174,7 +177,7 @@ export const regexHighlight = ({
                 /* splice the dash (classrange to); I *think* this should always work
                    because there's nothing else that can be part of a range, right?
                    a char class considers everything in it to be literal ... */
-                array.push( { type: node.type, html: '-' } );
+                array.push( { type: node.type, html: '<span class="RangeMetaChar">-</span>' } );
             }
             
             node = node.node; // we don't need anything else on NodePath
@@ -187,12 +190,11 @@ export const regexHighlight = ({
         },
         CharacterClass:  {
             pre({node}) {
-                array.push(addHTML(
-                    { type: node.type, negative: node['negative'], prefix: "[" }
-                ));
+                array.push(
+                    { type: node.type, negative: node['negative'], html: "<span class='CharacterClass'><span class='ClassMetaChar'>[</span>" });
             },
             post({node}) {
-                array.push(addHTML( { type: node.type, suffix: "]" } ));
+                array.push({ type: node.type, html: "<span class='ClassMetaChar'>]</span></span>" });
             }
         },
         ClassRange: {
@@ -240,35 +242,38 @@ export const regexHighlight = ({
         },
         Group: {
             pre({node}) {
-                let prefix, suffix;
+                let prefix;
                 if (node.capturing) {
                     if (node['name']) {
                         // one-off to format this ourselves, it's
                         // more complex than the others
-                        prefix = '(?';
-                        array.push( addHTML({ type: node.type, kind: 'Named', 
-                                             number: node.number, prefix: prefix }) );
+                        array.push( { type: node.type, 
+                                      html: `<span class='Group Named'><span class="GroupChar">(?&lt;</span>`
+                                    } );
                         array.push( { type: node.type,
-                                      html: `<span class='Group Named'>&lt;<span class='CaptureName'>${node.name}</span>&gt;</span>`
+                                      html: `<span class='CaptureName'>${node.name}</span><span class="GroupChar">&gt;</span>`
                                     } );
                         return;
                     }
                     else
                     {
-                        prefix = '(';
+                        array.push( { type: node.type,
+                                      html: `<span class='Group Capture'><span class="GroupChar">(</span>`
+                                    } );
                     }
                 }
                 else
                 {
-                    prefix = '(?:';
+                    array.push( { type: node.type,
+                                      html: `<span class='Group Capture'><span class="GroupChar">(?:</span>`
+                                    } );
                 }
                 
                 array.push( addHTML({ type: node.type, capturing: node.capturing,
-                            number: node.number, name: node.name, prefix: prefix,
-                            suffix: suffix }) );
+                            number: node.number, name: node.name, prefix: prefix }) );
             },
             post({node}) {
-                array.push({ type: node.type, html: `)</span>`});
+                array.push({ type: node.type, html: `<span class="GroupChar">)</span></span>`});
             }
         },
         Quantifier({node}) {

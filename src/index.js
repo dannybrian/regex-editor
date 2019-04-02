@@ -101,6 +101,7 @@ const inputChange = (e) => {
         }
         catch (err) {
             if (err) {
+                regexContainer.classList.remove('success');
                 log.warn('Unknown regex parse error' + err); // FIXME: not clear what above is causing err to not be caught here...
             }
             regexBackground.innerHTML = escapeHTML(regexVal);

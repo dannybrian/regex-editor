@@ -80,6 +80,7 @@ body {
         position: absolute;
         display: inline-block;
         top: 0;
+        letter-spacing: 1.4px;
         padding: @inputPadding;
         margin: 0;
         pointer-events: none;
@@ -102,7 +103,7 @@ body {
 
     /* make our text area transparent except for the cursor */
     #regexInput {
-        color: rgba(0, 0, 0, 0.25); // comment for debugging
+        color: rgba(0, 0, 0, 0); // for debugging; leaving dim for now in order to detect addl problems with the HTML
         caret-color: black;
         border: none;
         overflow: hidden;
@@ -123,37 +124,37 @@ body {
     
     #regexBackground {
         .Assertion {
-            background-color: #fcb7ff;
+            background-color: rgba(157, 39, 162, 0.11);
             .Char {
                 background-color: rgba(255, 255, 255, 0.3);
             }
             &.AnchorFront {
-                background-color: rgb(90, 90, 90);
+                background-color: rgb(132, 132, 132);
             }
             &.AnchorBack {
-                background-color: rgb(90, 90, 90);
+                background-color: rgb(132, 132, 132);
             }
         }
         .Backreference {
-            background-color: #c2ffc7;
+            // background-color: #c2ffc7;
         }
         .Char {
             background-color: #ffffff;
             &.unicode {
-                background-color: #ffe1e7;
+                //background-color: #ffe1e7;
             }
             &.meta {
-                background-color: #fcffe1;
+                //background-color: #fcffe1;
             }
         }
         .Disjunction {
             /* background-color: inherit; */
         }
         .DisjunctionMetaChar {
-            background-color: rgba(180, 255, 255, 0.67);
+            background-color: none; // rgba(180, 255, 255, 0.67);
         }
         .Group {
-            background-color: #c2ffc7;
+            background-color: rgba(142, 255, 151, 0.3);
             .Char {
                 background-color: rgba(255, 255, 255, 0.3);
                 &.meta {
@@ -165,14 +166,14 @@ body {
             }
         }
         .Quantifier {
-            background-color: #ffcf97;
+            // background-color: #ffcf97;
             
         }
         .ClassRange {
-            background-color: #fad7d7;
+            // background-color: #fad7d7;
         }
         .CharacterClass {
-            background-color: #fad7d7;
+            background-color: #efffaf;
             .Char {
                 background-color: inherit;
             }
@@ -181,15 +182,43 @@ body {
     
     #regexForeground {
         color: #666;
-        .DisjunctionMetaChar, .Assertion, .Group, .Quantifier, .Backreference {
+        
+        .Group, .Quantifier {
             color: #000;
+        }
+        .Assertion {
+            color: #9d27a2;
         }
         .AnchorFront, .AnchorBack {
             color: #fff;
         }
-        .CaptureName {
-            color: #60a7c4;
+        .Backreference {
+            color: #10b422;
         }
+        .CaptureName {
+            color: #c46060;
+        }
+        .RangeMetaChar, .ClassMetaChar {
+            color: #f88817;
+        }
+        .GroupChar {
+            color: #10b422;
+        }
+        .DisjunctionMetaChar {
+            color: #10b422;
+        }
+        .Char {
+            &.unicode {
+                color: #905763;
+            }
+            &.meta {
+                color: #f88817;
+            }
+        }
+        .Quantifier {
+            color: #5d82ff;
+        }
+
     }
 
 }
