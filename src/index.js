@@ -52,11 +52,6 @@ function passEvent (e, el) {
     }
 }
 
-regexInput.addEventListener('click', (e) => { passEvent(e, regexForeground) });
-regexInput.addEventListener('mouseover', (e) => { passEvent(e, regexForeground) });
-regexInput.addEventListener('mousemove', (e) => { passEvent(e, regexForeground) });
-regexInput.addEventListener('mouseout', (e) => { passEvent(e, regexForeground) });
-
 regexContainer.classList.remove('success');
 
 regexForeground.addEventListener('mouseover', function(e) {
