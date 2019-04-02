@@ -1,4 +1,6 @@
-# Regex Highlighter
+# Regex Editor/Highlighter
+
+This is a web-based editor for regular expressions, initially created as a component of the Aparte NLP project.
 
 ~~~~
 import { regexHighlight, RegexError } from '../regex-highlighter'; // needs -r esm under node
