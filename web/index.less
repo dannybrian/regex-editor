@@ -88,10 +88,8 @@ body {
         max-width: @inputWidth - 20;
         min-height: 300%;
         overflow:hidden;
-        overflow-x: hidden;
-        overflow-y: hidden;
-        word-wrap: break-word;
-        white-space: pre;
+        //word-wrap: break-word;
+        // white-space: pre;
         .regex .delim {
             color: #aaa;
         }
@@ -107,16 +105,14 @@ body {
         color: rgba(0, 0, 0, 0.25); // comment for debugging
         caret-color: black;
         border: none;
-        border: none;
-        overflow: auto;
+        overflow: hidden;
         outline: none;
-        box-shadow: none;
         resize: none;
+        box-shadow: none;
         background-color: rgba(0, 0, 0, 0);
         font-family: 'Monaco', 'Source Sans Pro', sans-serif;
         font-size: @regexFontSize;
         left: 1px;
-        overflow: hidden;
         &::placeholder {
             color: #ccc;
             font-size: @regexFontSize;
