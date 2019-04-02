@@ -1,7 +1,7 @@
 @inputPadding: 4px;
-@inputWidth: 500px;
-@inputHeight: 50px;
-@regexFontSize: 12px;
+@inputWidth: 700px;
+@inputHeight: 80px;
+@regexFontSize: 18px;
 
 /* demo styles, not needed for regex use */
 
@@ -17,7 +17,7 @@ html {
 
 body {
     margin: 64px 64px;
-    font-size: 100%;
+    font-size: @regexFontSize;
     max-width: 1200px;
     width: 94%;
     background-color: #f2f2f2;
@@ -76,6 +76,7 @@ body {
     #regexBackground { z-index: 10 };
     
     .regexInputContainer, #regexInput, #regexBackground, #regexForeground {
+        font-family: 'Monaco', 'Source Sans Pro', sans-serif;
         position: absolute;
         display: inline-block;
         top: 0;
@@ -87,10 +88,16 @@ body {
         max-width: 100%;
         min-height: 300%;
         overflow:hidden;
-        word-wrap: ;
+        word-wrap: break-word;
+        white-space: pre;
         .regex .delim {
             color: #aaa;
         }
+    }
+    
+    // see index.js for details
+    #regexInput {
+        pointer-events: all;
     }
 
     /* make our text area transparent except for the cursor */
@@ -98,7 +105,6 @@ body {
         color: rgba(0, 0, 0, 0);
         caret-color: black;
         border: none;
-        pointer-events: all;
         border: none;
         overflow: auto;
         outline: none;

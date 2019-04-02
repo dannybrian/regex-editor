@@ -24,7 +24,57 @@ const regexBackground = document.getElementById('regexBackground');
 const regexForeground = document.getElementById('regexForeground');
 const regexContainer = document.getElementsByClassName('regexContainer')[0];
 
+/* regexInput gets all the pointer events and triggers the rest for its 
+   siblings (hovers for tooltips, focus for input). Some fun fanc-ery here 
+   to simulate real editing of the regex with a textarea while still getting 
+   the cursor benefits, which are really a PITA to simulate without the native
+   element btw. And managing this event pass with parent/children is very
+   cumbersome. */
+
+// MouseEvent has no IE11 support, not that we care.
+function passEvent (e, el) {
+    //e.stopPropagation();
+    // console.log(e);
+    var evt = new MouseEvent(e.type, {
+        bubbles: true,
+        cancelable: true,
+        view: window,
+        screenX: e.screenX,
+        screenY: e.screenY,
+        clientX: e.clientX,
+        clientY: e.clientY
+    });
+    var canceled = !el.dispatchEvent(evt);
+    if(canceled) {
+        // A handler called preventDefault
+    } else {
+        // None of the handlers called preventDefault
+    }
+}
+
+regexInput.addEventListener('click', (e) => { passEvent(e, regexForeground) });
+regexInput.addEventListener('mouseover', (e) => { passEvent(e, regexForeground) });
+regexInput.addEventListener('mousemove', (e) => { passEvent(e, regexForeground) });
+regexInput.addEventListener('mouseout', (e) => { passEvent(e, regexForeground) });
+
 regexContainer.classList.remove('success');
+
+regexForeground.addEventListener('mouseover', function(e) {
+    console.log(regexForeground); // this can't work; we'd need to attach a handler to 
+    // every span in the regex; there's no way to trigger :hover via custom MouseEvent..
+    // :( Do we really care about tooltips for tokens? Maybe we just need clicks to 
+    // highlight the crucial Aparte stuff? Or maybe I implement a single tooltip for 
+    // the app and use document.elementFromPoint? But that only gives you the topmost
+    // element ... drat.
+    
+    // this.classList.add('hover');
+});
+regexForeground.addEventListener('mousemove', function(e) {
+});
+regexForeground.addEventListener('mouseout', function(e) {
+});
+regexForeground.addEventListener('click', function(e) {
+});
 
 const inputChange = (e) => {
     setTimeout(function() {

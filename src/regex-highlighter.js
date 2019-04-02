@@ -98,7 +98,7 @@ export const regexHighlight = ({
         
         token.html = '';
         if (token['prefix']) {
-            token.html += `<span class='${token.type} ${token.kind || ''}'  >${escapeHTML(token.prefix)}`;
+            token.html += `<span data-tooltip='${token.tooltip}' onmouseover='console.log("mouseover??");' class='${token.type} ${token.kind || ''}'  >${escapeHTML(token.prefix)}`;
         }
         if (token['string'])
         {
@@ -133,7 +133,7 @@ export const regexHighlight = ({
         
         Alternative: {
             pre({node}) {
-                array.push({ type: node.type, html: '<span class="Alternative">' });
+                array.push({ type: node.type, html: '<span data-tooltip="Alternative" class="Alternative">' });
             },
             post({node}) {
                 array.push({ type: node.type, html: '</span>' });
@@ -156,7 +156,7 @@ export const regexHighlight = ({
                              node.kind === '$' ? 'AnchorBack' : // $
                              'WordBound'; // \\b, but includes \\B too! don't think it matters for highlighting..
                  }
-                array.push(addHTML( { type: node.type, kind: node.kind, negative: node['negative'], prefix: rprefix ? rprefix : node.loc.source } ));
+                array.push(addHTML( { type: node.type, kind: node.kind, negative: node['negative'], prefix: rprefix ? rprefix : node.loc.source, tooltip: "Anchor" } ));
             },
             post({node}) {
                 if (node.kind === 'Lookahead' || node.kind === 'Lookbehind')
