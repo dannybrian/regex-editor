@@ -8,7 +8,7 @@ import ulog from 'ulog';
 const log = ulog('regex');
 window.log = log;
 
-log.level = log.DEBUG;
+log.level = log.WARN;
 
 const unknownErrorRegex = /SyntaxError:\s+(.+)\s*$/g;
                 
