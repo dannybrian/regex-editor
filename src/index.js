@@ -8,8 +8,10 @@ import ulog from 'ulog';
 const log = ulog('regex');
 window.log = log;
 
-log.level = log.WARN;
+log.level = log.DEBUG;
 
+const unknownErrorRegex = /SyntaxError:\s+(.+)\s*$/g;
+                
 const escapeHTML = (unsafe) => {
     return unsafe
          .replace(/&/g, "&amp;")
@@ -23,6 +25,7 @@ const regexInput = document.getElementById('regexInput');
 const regexBackground = document.getElementById('regexBackground');
 const regexForeground = document.getElementById('regexForeground');
 const regexContainer = document.getElementsByClassName('regexContainer')[0];
+const regexError = document.getElementsByClassName('regexError')[0];
 
 /* regexInput gets all the pointer events and triggers the rest for its 
    siblings (hovers for tooltips, focus for input). Some fun fanc-ery here 
@@ -54,6 +57,10 @@ function passEvent (e, el) {
 
 regexContainer.classList.remove('success');
 
+const showError = (e) => {
+    regexError.textContent = e;
+};
+
 regexForeground.addEventListener('mouseover', function(e) {
     console.log(regexForeground); // this can't work; we'd need to attach a handler to 
     // every span in the regex; there's no way to trigger :hover via custom MouseEvent..
@@ -84,14 +91,14 @@ const inputChange = (e) => {
                     log.error('Regex HTML is undefined, but saying success?');
                 }
                 regexContainer.classList.add('success');
+                showError('');
                 let escapedHTMLVal = regex.html;
-                // FIXME: wrapping, we probably should do this:
-                // https://stackoverflow.com/questions/499137/css-how-can-i-force-a-long-string-without-any-blank-to-be-wrapped-in-xul-and
                 regexBackground.innerHTML = escapedHTMLVal;
                 regexForeground.innerHTML = escapedHTMLVal;
             }
             else // we've should have an error object instead
             {
+                showError(regex.error['message'] + `: '${regex.error.token}'.`);
                 regexContainer.classList.remove('success');
                 log.debug('Regex parse error: ' + JSON.stringify(regex));
                 let escapedHTMLVal = escapeHTML(regexVal);
@@ -102,7 +109,13 @@ const inputChange = (e) => {
         catch (err) {
             if (err) {
                 regexContainer.classList.remove('success');
-                log.warn('Unknown regex parse error' + err); // FIXME: not clear what above is causing err to not be caught here...
+                log.warn('Unknown regex parse error' + err);
+                // FIXME: not clear what above is causing err to not be caught here...
+                // but let's try to give some feedback anyway.
+                let match = unknownErrorRegex.exec(err);
+                if (match != null) {
+                    showError('⚠ ' + match[1]);
+                }
             }
             regexBackground.innerHTML = escapeHTML(regexVal);
             regexForeground.innerHTML = escapeHTML(regexVal);

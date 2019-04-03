@@ -27,7 +27,7 @@ const escapeHTML = (unsafe) => {
 // regexHighlight: ({regex:String, type?:String}) => String
 // IMPORTANT: the regex into needs to be a string
 
-log.level = log.WARN;
+log.level = log.DEBUG;
 
 export const regexHighlight = ({
     regex = '',
