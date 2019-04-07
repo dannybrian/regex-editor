@@ -264,6 +264,43 @@ test('generators', t => {
     t.is(n, 1597);
 });
 
+// generator + recursive iterators, tree traversal
+
+class BinaryTree {
+    constructor(value, left=null, right=null) {
+        this.value = value;
+        this.left = left;
+        this.right = right;
+    }
+
+    /** Prefix iteration */
+    * [Symbol.iterator]() {
+        yield this;
+        if (this.left) {
+            yield* this.left;
+        }
+        if (this.right) {
+            yield* this.right;
+        }
+    }
+}
+
+// so cool that this works...
+test('recursive iterators', t => {
+    let tree = new BinaryTree('1',
+        new BinaryTree('2',
+        new BinaryTree('3'),
+        new BinaryTree('4')),
+        new BinaryTree('5'));
+
+    let ivalue = 0;
+    for (let x of tree) {        
+        t.truthy(x.value == ++ivalue); // string == num
+    }
+
+});
+
+
 // enhanced object literals
 class Point {};
 var point = new Point;
