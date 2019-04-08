@@ -1,5 +1,5 @@
 @inputPadding: 4px;
-@inputWidth: 700px;
+@inputWidth: 500px;
 @inputHeight: 80px;
 @regexFontSize: 18px;
 
@@ -33,11 +33,12 @@ body {
     width: @inputWidth + 30;
     height: @inputHeight + 10;
     
-    #regexPrefix, #regexSuffix {
+    #regexPrefix, #regexSuffix, #regexFlags {
         color: #aaa;
         font-size: 24px;
         position: absolute;
         top: @inputPadding;
+        font-family: 'Source Sans Pro', sans-serif;
     }
     
     #regexPrefix {
@@ -46,6 +47,25 @@ body {
     
     #regexSuffix {
         right: 4px;
+    }
+    
+    #regexFlags {
+        width: 254px;
+        height: @inputHeight;
+        left: @inputWidth + @inputPadding + 30;
+        font-size: @regexFontSize;
+        .flag-label {
+            color: #999;
+            font-weight: bold;
+        }
+        .left {
+            width: 114px;
+            float: left;
+        }
+        .right {
+            width: 140px;
+            float: right;
+        }
     }
     
     #regexError {

@@ -20,7 +20,7 @@ class RegexEditor extends LitElement {
     constructor() {
         super();
         this.parseResult = 'failure';
-        this.regexValue = 'a|b';
+        this.regexValue = '';
         this.regexError = '';
         this.debugLevel = '';
     }
@@ -98,6 +98,36 @@ class RegexEditor extends LitElement {
           <div id="regexTopContainer">
             <div id="regexPrefix">/</div>
             <div id="regexSuffix">/</div>
+            <div id="regexFlags">
+                <div class="left">
+                    <div>
+                        <input type="checkbox" id="i" name="i" checked>
+                        <label for="i"><span class="flag-label">i</span>nsensitive</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="g" name="g">
+                        <label for="g"><span class="flag-label">g</span>lobal</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="m" name="m">
+                        <label for="m"><span class="flag-label">m</span>ultiline</label>
+                    </div>
+                </div>
+                <div class="right">
+                    <div>
+                        <input type="checkbox" id="x" name="x" checked>
+                        <label for="x">e<span class="flag-label">x</span>tended</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="u" name="u">
+                        <label for="u"><span class="flag-label">u</span>nicode</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="s" name="s">
+                        <label for="s"><span class="flag-label">s</span>ingle line</label>
+                    </div>
+                </div>
+            </div>
             <div id="regexContainer" class="${this.parseResult}">
                 <div id="regexBackground"></div>
                 <div id="regexInputContainer">
