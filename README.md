@@ -105,7 +105,7 @@ Continuous watch/build tools like watchify are not pipe/redirection friendly, an
 ~~~~
 % watchman watch-del-all
 % watchman -- trigger src/ jsfiles '*.js' -- npm run build-js
-% watchman -- trigger web/ webfiles '*.less' -- npm run build-css
+% watchman -- trigger src/ webfiles '*.less' -- npm run build-css
 % watchman shutdown-server # when done
 ~~~~
 
