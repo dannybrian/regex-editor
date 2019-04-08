@@ -9,7 +9,8 @@
     <link rel="stylesheet" href="regex-editor-bundle.css">
   </head>
   <body>
-      <regex-editor regexValue="a|b|\w+"></regex-editor>
+      <regex-editor regexValue="a|b|\w+" flags="ixm"></regex-editor>
+      <regex-editor regexValue="(a|b)\/+(?<V>hi\b)(?=ab|cde)\n\1\x{1234}\1\k<V>.([a-z0-9]*?|bb{1,12})" flags="gus"></regex-editor>
   </body>
   <script src="regex-editor-bundle.js"></script>
 </html>

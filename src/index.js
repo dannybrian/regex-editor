@@ -14,6 +14,27 @@ class RegexEditor extends LitElement {
         return {
             parseResult: String,
             debugLevel: String,
+            // note that lit-element has its own default converters for each type
+            // (thus the reason for declaring a type)
+            flags: {
+                type: Object,
+                reflect: true,
+                attribute: true,
+                converter: { // came up with a good pattern here
+                    fromAttribute: (value, type) => { // initial load only?
+                        // put this string into our object
+                        let flagsobj = {};
+                        value.split('').forEach(flag => { flagsobj[flag] = true; });
+                        console.log(flagsobj);
+                        return flagsobj;
+                    },
+                    toAttribute: (value, type) => { // obj in
+                        return Object.keys(value)
+                            .filter(flag => value[flag])
+                            .join('');
+                    }
+                }
+            },
             regexValue: { attribute: true, reflect: true }
         };
     }
@@ -23,6 +44,7 @@ class RegexEditor extends LitElement {
         this.regexValue = '';
         this.regexError = '';
         this.debugLevel = '';
+        this.flags = { };
     }
     firstUpdated() {
         this.regexInputEl = this.shadowRoot.getElementById('regexInput');
@@ -87,6 +109,10 @@ class RegexEditor extends LitElement {
             this.regexForeground.innerHTML = escapedHTMLVal;
         }
     }
+    _flagChanged(e) {
+        // gotta assign the top object, not key/values!
+        this.flags = Object.assign({}, this.flags, {[e.target.id]: e.target.checked});
+    }
     render(){
         // FIXME: instead of loading CSS here, use static styles etc.
         // https://lit-element.polymer-project.org/guide/styles
@@ -101,29 +127,30 @@ class RegexEditor extends LitElement {
             <div id="regexFlags">
                 <div class="left">
                     <div>
-                        <input type="checkbox" id="i" name="i" checked>
+                        <input type="checkbox" id="i" name="i" ?checked="${this.flags.i}" @change="${this._flagChanged}">
                         <label for="i"><span class="flag-label">i</span>nsensitive</label>
                     </div>
                     <div>
-                        <input type="checkbox" id="g" name="g">
-                        <label for="g"><span class="flag-label">g</span>lobal</label>
+                        <input type="checkbox" id="x" name="x" ?checked="${this.flags.x}" @change="${this._flagChanged}">
+                        <label for="x">e<span class="flag-label">x</span>tended</label>
                     </div>
                     <div>
-                        <input type="checkbox" id="m" name="m">
+                        <input type="checkbox" id="m" name="m" ?checked="${this.flags.m}" @change="${this._flagChanged}">
                         <label for="m"><span class="flag-label">m</span>ultiline</label>
                     </div>
                 </div>
                 <div class="right">
                     <div>
-                        <input type="checkbox" id="x" name="x" checked>
-                        <label for="x">e<span class="flag-label">x</span>tended</label>
+                        <input type="checkbox" id="g" name="g" ?checked="${this.flags.g}" @change="${this._flagChanged}">
+                        <label for="g"><span class="flag-label">g</span>lobal</label>
                     </div>
+                    
                     <div>
-                        <input type="checkbox" id="u" name="u">
+                        <input type="checkbox" id="u" name="u" ?checked="${this.flags.u}" @change="${this._flagChanged}">
                         <label for="u"><span class="flag-label">u</span>nicode</label>
                     </div>
                     <div>
-                        <input type="checkbox" id="s" name="s">
+                        <input type="checkbox" id="s" name="s" ?checked="${this.flags.s}" @change="${this._flagChanged}">
                         <label for="s"><span class="flag-label">s</span>ingle line</label>
                     </div>
                 </div>

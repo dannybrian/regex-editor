@@ -31,9 +31,9 @@ practices. :-)
 
 ### File Structure
 
-* `src/` - the source code, with `index.js` as an entry point and other modules named sanely. The `index.js` (or `web.js`) file is generally the entry point for a web build. See the `package.json` below.
+* `src/` - the source code, with `index.js` as an entry point and other modules named sanely. The `index.js` (or `web.js`) file is generally the entry point for a web build. See the `package.json` below. The built library (in `web/`) should be named per the package itself, e.g. `web/regex-editor-bundle.js`.
 * `tests/` - unit tests written with Ava.
-* `web/` - deployable web implementations, with only UI-necessary logic.
+* `web/` - deployable web implementations, with only UI-necessary logic. Build them as custom elements, using [lit-element](https://github.com/Polymer/lit-element) when they need templating and binding etc. Document the API at the top of the .js file. Use `index.html` to load and demonstrate its functionality; ideally, simply loading the index in a browser should demonstrate all its features, acting also as a test.
 * `experiments/` - non-production code to demonstrate or test ideas.
 * `dist/` - bundled or built versions of the code in `src/`, generally not committed to git.
 
