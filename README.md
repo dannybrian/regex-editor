@@ -46,9 +46,14 @@ browsers.
 
 I swear by LESS as a CSS preprocessor `(web/*.less)`, Browserify for `require()` compatibility, Butternut/squash for minification, the ESM module for making Node ES6-capable (forget `--experimental-modules`), and ESMify for adding ES6 import/export properly to Browserify builds. Many of these decisions are based on the fact that everything I'm writing is as an ES6 module. This doesn't mean everything is an ES6 class! To the contrary.
 
+### ES6 Features
+
+See the test file `tests/0-pattern.js` for ES6 features and patterns I want to utilize 
+more. 
+
 ### ES6 Modules
 
-Use `export` as a function keyword to keep this all sane. I personally think the `default` is overrated.
+Use `export` as a function keyword to keep this all sane. I personally think that `default` is overrated.
 
 ~~~~
 export const regexHighlight = ({ DEFAULTS }) => { }

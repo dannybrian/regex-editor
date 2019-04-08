@@ -5,7 +5,8 @@ const regexpTree = require('regexp-tree');
 /* This module will make a lot more sense if you read the regexp-tree docs :-) */
 
 const log = ulog('rexeg-highlighter');
-const errorRegex = new RegExp(/^SyntaxError:\s+(\/.+?\/)\s+\^\s+(Unexpected.+?):\s+"(.+?)"\s+at\s+(\d+):(\d+)\./, 'm');
+const errorRegex = new RegExp(/^SyntaxError:\s+(\/.+?\/)\s+\^\s+(Unexpected.+?):\s+["'](.+?)["']\s+(?:at\s+(\d+):(\d+))?\./, 'm');
+const unknownErrorRegex = new RegExp(/SyntaxError:\s+(.+)\s*$/, 'g');
 
 const escapeRegex = (s) => {
     return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
@@ -50,7 +51,8 @@ export const regexHighlight = ({
     catch (err)
     {
         if (err === undefined) { // why aren't we getting an error?
-            log.warn('Unknown regex parse error (no err caught)');
+            // log.warn('Unknown regex parse error (no err caught)');
+            throw new RegexError ('Unknown regex parse error (no err caught?).');
             return;
         }
         
@@ -58,13 +60,28 @@ export const regexHighlight = ({
             
         let matches = errorRegex.exec(err);
         if (matches && matches.length > 0) {
-            return { success: false, error: { message: matches[2], pattern: matches[1],
-                     token: matches[3], line: matches[4], column: matches[5] } };
+            /* We used to return an error object but now we always throw, and let
+               the caller handle the error if they want to. */
+            let reerr = new RegexError (); // try a trailing / to see
+            log.debug('Regex error with successful parse, throwing error..');
+                
+            throw Object.assign(reerr, { success: false, error: { message: matches[2], 
+                pattern: matches[1], token: matches[3], line: matches[4], column: matches[5] } });
         }
         else
         {
-            log.warn('Regex error: ' + err); // try an isolated backslash \ to see
-            throw new RegexError ('Invalid regular expression, unknown error: ' + err);
+            // try and throw some feedback anyway.
+            let umatches = unknownErrorRegex.exec(err);
+            // try an isolated backslash \ to see
+            if (umatches && umatches.length > 0) {
+                log.debug('Unknown error with matching string: ' + err);
+                throw new RegexError ('⚠ ' + umatches[1]);
+            }
+            else
+            {
+                log.debug('No matches for the thrown regex error: ' + err);
+                throw new RegexError('⚠ Unknown regex error: ' + err);
+            }       
         }
     }
 
@@ -131,7 +148,7 @@ export const regexHighlight = ({
               array.push( { type: node.node.type, html: '<span class="DisjunctionMetaChar">|</span>' } );
             }
             
-            log.debug("Node PROPERTY: " + node.property + ",  TYPE: " + node.node.type);
+            // log.debug("Node PROPERTY: " + node.property + ",  TYPE: " + node.node.type);
         },
         
         Alternative: {

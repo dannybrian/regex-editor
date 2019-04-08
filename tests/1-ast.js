@@ -23,8 +23,8 @@ test('regex parse',  t => {
 test('passing RegExp object', t => {
     try {
         const regexHL = regexHighlight({ regex: /a|b+/ });
-        // we outlaw this because we want regexHighlight to throw the 
-        // errors, rather than JavaScript doing so.
+        // we outlaw (non-string regex) this because we want regexHighlight to throw the 
+        // errors, rather than the JavaScript parser doing so.
     }
     catch (err)
     {
@@ -34,15 +34,21 @@ test('passing RegExp object', t => {
 });
 
 test('regex string parse with errors',  t => {
-    // we don't throw exceptions with parse errors, wanting this information
-    // to be handled and displayed by the editor.
-    const regexHL = regexHighlight({ regex: '/a|b++/' });
-    t.false(regexHL.success);
-    t.is(regexHL.error['message'], 'Unexpected token');
-    t.is(regexHL.error['token'], '+');
-    t.is(regexHL.error['column'], '5');
-    t.is(regexHL.error['line'], '1');
-    t.is(regexHL.error['pattern'], '/a|b++/');
+    /* we always throw errors from the regexHighlight, this one just 
+       contains a lot more information */
+    try 
+    {
+        const regexHL = regexHighlight({ regex: '/a|b++/' });
+    }
+    catch (err)
+    {
+        t.false(err.success);  
+        t.is(err.error['message'], 'Unexpected token');
+        t.is(err.error['token'], '+');
+        t.is(err.error['column'], '5');
+        t.is(err.error['line'], '1');
+        t.is(err.error['pattern'], '/a|b++/');
+    }
 });
 
 test('regex AST', t => {
@@ -53,14 +59,14 @@ test('regex AST', t => {
 });
 
 test('AST chars', t => {
-     const regexHL = regexHighlight({ regex: '/\\u003B\\42\\x3Bq\\u{1F680}\\ud83d\\ude80❤️/ui' });
-     // console.log(util.inspect(regexHL.array, { showHidden: false, depth: null, colors: true }));
-     t.is(regexHL.array[1].string, "\\u003B");
-     t.is(regexHL.array[1].kind, "unicode");
-     t.is(regexHL.array[7].kind, "simple");
-     t.is(regexHL.array[7].type, "Char");
-     t.is(regexHL.array[7].string, "❤");
-     t.is(regexHL.flags, "iu");
+    const regexHL = regexHighlight({ regex: '/\\u003B\\42\\x3Bq\\u{1F680}\\ud83d\\ude80❤️/ui' });
+    // console.log(util.inspect(regexHL.array, { showHidden: false, depth: null, colors: true }));
+    t.is(regexHL.array[1].string, "\\u003B");
+    t.is(regexHL.array[1].kind, "unicode");
+    t.is(regexHL.array[7].kind, "simple");
+    t.is(regexHL.array[7].type, "Char");
+    t.is(regexHL.array[7].string, "❤");
+    t.is(regexHL.flags, "iu");
 });
 
 test('AST character classes', t => {
@@ -77,14 +83,19 @@ test('AST character classes', t => {
 });
 
 test('error parsing edge case', t => {
-    const regexHL = regexHighlight({ regex: '/a|b(ac)//' });
-    t.false(regexHL.success);
-    t.is(regexHL.error['message'], 'Unexpected token');
-    t.is(regexHL.error['token'], '/');
-    t.is(regexHL.error['column'], '9');
-    t.is(regexHL.error['line'], '1');
-    t.is(regexHL.error['pattern'], '/a|b(ac)//');
-    
+    try
+    {
+        const regexHL = regexHighlight({ regex: '/a|b(ac)//' });
+    }
+    catch (err)
+    {
+        t.false(err.success);
+        t.is(err.error['message'], 'Unexpected token');
+        t.is(err.error['token'], '/');
+        t.is(err.error['column'], '9');
+        t.is(err.error['line'], '1');
+        t.is(err.error['pattern'], '/a|b(ac)//');
+    }
 });
 
 // ^(a|b)\/+(?<V>hi\b)(?=ab|cde)\1\x{1234}\1\k<V>.([a-z0-9]*?|bb{1,12})$d
