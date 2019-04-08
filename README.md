@@ -21,7 +21,10 @@ regexHL.array; // a specialized list of tokens for generating the HTML
 
 ## Build for Browser
 
-`% npm run build`
+This will create the necessary bundle files in `web/`.
+
+`% npm run build-js`
+`% npm run build-css`
 
 # As a Model for Further Development
 
@@ -66,7 +69,7 @@ Where you need `require()` (and you will), require imports at the top of your cl
 
 ### UI
 
-Build custom elements as ES6 classes that inherit from HTMLElement or LitElement, or others. These should:
+Build custom elements as ES6 classes that inherit from `HTMLElement` or `LitElement`, or others. These should:
 
 - Expose a documented API for attributes and methods "in"
 - Broadcast custom events "out", with an *occassional* reflection to element attributes)
