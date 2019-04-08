@@ -7,7 +7,6 @@ import ulog from 'ulog';
 
 const log = ulog('regex');
 window.log = log;
-
 log.level = log.WARN;
                 
 const escapeHTML = (unsafe) => {
