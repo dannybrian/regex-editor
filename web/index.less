@@ -95,8 +95,9 @@ body {
         max-width: @inputWidth - 20;
         min-height: 300%;
         overflow:hidden;
-        //word-wrap: break-word;
-        // white-space: pre;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+        /* ^^ I think these two are the right combination for #1 */
         .regex .delim {
             color: #aaa;
         }
@@ -109,7 +110,7 @@ body {
 
     /* make our text area transparent except for the cursor */
     #regexInput {
-        color: rgba(0, 0, 0, 0); // for debugging; leaving dim for now in order to detect addl problems with the HTML
+        color: rgba(0, 0, 0, 0.5); // for debugging; leaving dim for now in order to detect addl problems with the HTML
         caret-color: black;
         border: none;
         overflow: hidden;
