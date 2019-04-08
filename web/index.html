@@ -2,26 +2,28 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Aparte regex-highlighter</title>
-    <meta name="description" content="regex-highlighter">
+    <title>Aparte regex-editor</title>
+    <meta name="description" content="regex-editor">
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
-    <link rel="stylesheet" href="bundle.css">
+    <link rel="stylesheet" href="regex-editor-bundle.css">
   </head>
   <body>
-    <div class="regexTopContainer">
-        <div class="regexPrefix">/</div>
-        <div class="regexSuffix">/</div>
-        <div class="regexContainer">
+    <!--
+    <div id="regexTopContainer">
+        <div id="regexPrefix">/</div>
+        <div id="regexSuffix">/</div>
+        <div id="regexContainer">
             <div id="regexBackground"></div>
-            <div class="regexInputContainer">
+            <div id="regexInputContainer">
                 <textarea id="regexInput" wrap="hard" placeholder="regex goes here" autocorrect="off" autocapitalize="off" autocomplete="off" spellcheck="false" scrolling="no"></textarea>
             </div>
             <div id="regexForeground"></div>
         </div>
-        <div class="regexError"></div>
-        
-      </div>
+        <div id="regexError"></div>
+      </div>-->
+      
+      <regex-editor></regex-editor>
   </body>
-  <script src="bundle.js"></script>
+  <script src="regex-editor-bundle.js"></script>
 </html>

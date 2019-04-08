@@ -6,9 +6,9 @@
   "module": "regex-highlighter.js",
   "scripts": {
     "test": "ava tests/*.js",
-    "build-js": "browserify --debug src/index.js -p esmify > web/bundle.js ; [[ ${PIPESTATUS[0]} -eq 0 ]] && [[ ${PIPESTATUS[1]} -eq 0 ]] || notify -t 'JS Build Error' -m 'Browserify encountered a build error.' -x false;",
-    "build-css": "find web/ -name '*.less' -print0 | xargs -0 -n1 -I '{}' lessc {} web/bundle.css || notify -t 'CSS Build Error' -m 'Less encountered a build error.' -x false",
-    "build-prod": "squash web/bundle.js -o web/bundle.min.js"
+    "build-js": "browserify --debug src/index.js -p esmify > web/regex-editor-bundle.js ; [[ ${PIPESTATUS[0]} -eq 0 ]] && [[ ${PIPESTATUS[1]} -eq 0 ]] || notify -t 'JS Build Error' -m 'Browserify encountered a build error.' -x false;",
+    "build-css": "find src/ -name '*.less' -print0 | xargs -0 -n1 -I '{}' lessc {} web/regex-editor-bundle.css || notify -t 'CSS Build Error' -m 'Less encountered a build error.' -x false",
+    "build-prod": "squash web/regex-editor-bundle.js -o web/regex-editor-bundle.min.js"
   },
   "author": "Danny Brian",
   "license": "ISC",
@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "esm": "^3.2.20",
+    "lit-element": "^2.1.0",
     "regexp-tree": "^0.1.5",
     "ulog": "^2.0.0-beta.6"
   }

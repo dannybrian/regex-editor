@@ -25,7 +25,7 @@ body {
 
 /* regex styles */
 
-.regexTopContainer {
+#regexTopContainer {
     box-sizing: border-box;
     position: relative;
     margin: 10px;
@@ -33,29 +33,29 @@ body {
     width: @inputWidth + 30;
     height: @inputHeight + 10;
     
-    .regexPrefix, .regexSuffix {
+    #regexPrefix, #regexSuffix {
         color: #aaa;
         font-size: 24px;
         position: absolute;
         top: @inputPadding;
     }
     
-    .regexPrefix {
+    #regexPrefix {
         left: -2px;
     }
     
-    .regexSuffix {
+    #regexSuffix {
         right: 4px;
     }
     
-    .regexError {
+    #regexError {
         font-family: 'Source Sans Pro', sans-serif;
         margin: 16px;
     }
 
 }
 
-.regexContainer {
+#regexContainer {
     font-family: 'Source Code Pro', 'Monaco', 'Source Sans Pro', sans-serif;
     font-size: @regexFontSize;
     box-sizing: border-box;
@@ -80,7 +80,7 @@ body {
     #regexInput { z-index: 20; }
     #regexBackground { z-index: 10 };
     
-    .regexInputContainer, #regexInput, #regexBackground, #regexForeground {
+    #regexInputContainer, #regexInput, #regexBackground, #regexForeground {
         font-family: 'Source Code Pro', 'Monaco', 'Source Sans Pro', sans-serif;
         font-weight: 400;
         position: absolute;
@@ -110,7 +110,7 @@ body {
 
     /* make our text area transparent except for the cursor */
     #regexInput {
-        color: rgba(0, 0, 0, 0.5); // for debugging; leaving dim for now in order to detect addl problems with the HTML
+        color: rgba(0, 0, 0, 0); // for debugging; leaving dim for now in order to detect addl problems with the HTML
         caret-color: black;
         border: none;
         overflow: hidden;
