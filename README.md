@@ -64,6 +64,19 @@ import { regexHighlight } from '../src/regex-highlighter';
 
 Where you need `require()` (and you will), require imports at the top of your class's `.js`. file and have at least an `src/index.js` which gives a successful browserify build.
 
+### UI
+
+Build custom elements as ES6 classes that inherit from HTMLElement or LitElement, or others. These should:
+
+- Expose a documented API for attributes and methods "in"
+- Broadcast custom events "out", with an *occassional* reflection to element attributes)
+- Minimize doc queries in JavaScript; avoid them entirely when possible, using templates instead. See [performant templates](https://lit-element.polymer-project.org/guide/templates#design-a-performant-template) in the lit-element docs.
+- Rendering should have zero side effects.
+- Avoid all use of `innerHTML` (although this custom element does it extensively).
+- Include a `web/index.html` that demonstrates uses for the custom element, and ideally function as a no-click set of end-to-end tests.
+
+Refer to `src/index.js` to get a sense of how the above are implemented.
+
 ### Errors
 
 Throw errors and add tests to test for them.
