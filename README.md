@@ -113,6 +113,8 @@ catch (err)
 
 As a rule, return data structures, `try/catch/finally` where you need to intercept throws, and throw your own custom errors where you don't anticipate much processing of the exception.
 
+Also don't forget `console.assert()`! It doesn't throw (anymore), so using it anywhere to test *knows* like expected parameters or contracts is useful when an error message in the console is enough. Which it often is.
+
 ### Developing
 
 I run the `ws` web server (Node's) in `web/`, but any ol' web server will do.
