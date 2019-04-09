@@ -5,7 +5,7 @@
   "main": "regex-editor.js",
   "module": "regex-editor.js",
   "scripts": {
-    "test": "ava tests/*.js",
+    "test": "ava --verbose tests/*.js",
     "build-js": "browserify --debug src/index.js -p esmify > web/regex-editor-bundle.js ; [[ ${PIPESTATUS[0]} -eq 0 ]] && [[ ${PIPESTATUS[1]} -eq 0 ]] || notify -t 'JS Build Error' -m 'Browserify encountered a build error.' -x false;",
     "build-css": "find src/ -name '*.less' -print0 | xargs -0 -n1 -I '{}' lessc {} web/regex-editor-bundle.css || notify -t 'CSS Build Error' -m 'Less encountered a build error.' -x false",
     "build-prod": "squash web/regex-editor-bundle.js -o web/regex-editor-bundle.min.js"

@@ -1,7 +1,8 @@
 /* I created file not as a test so much as illustration and demonstration 
    (and confidence builder in the features) of ES6/7 programming features
    I want this code base to utilize. I find myself referring often to
-   these examples to remember.
+   these examples to remember. The functional idioms in JS are so much
+   better now with arrow operators, promises, and generators.
    
    https://babeljs.io/docs/en/learn
    
@@ -455,6 +456,7 @@ var handler =
 */
 
 // https://hacks.mozilla.org/2015/07/es6-in-depth-proxies-and-reflect/
+// https://rosettacode.org/wiki/Respond_to_an_unknown_method_call#JavaScript
 test('Autocreate parameters! (AUTOLOAD)', t => {
     function Tree() {
         return new Proxy({}, handler);
@@ -474,7 +476,10 @@ test('Autocreate parameters! (AUTOLOAD)', t => {
     
     t.truthy(tree.branch1.branch3);
     t.is(tree.branch1.branch3.twig, "yellow");
-    
+    /* Although I *might* use this pattern to make it easy to explore a large
+       state object, it does prevent a not defined error (which is its purpose),
+       but that also means things like typos don't get thrown. It may be better
+       to create our own logging mechanisms, however. Or error alerts. */
 });
 
 /* Symbols, not including now */

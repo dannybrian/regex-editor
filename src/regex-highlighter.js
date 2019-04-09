@@ -12,6 +12,7 @@ const escapeRegex = (s) => {
     return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 };
 const escapeHTML = (unsafe) => {
+    if (!unsafe) return;
     return unsafe
          .replace(/&/g, "&amp;")
          .replace(/</g, "&lt;")
@@ -171,11 +172,12 @@ export const regexHighlight = ({
                 }
                 else
                 {
+                    rprefix = node.loc.source;
                     node.kind = node.kind === '^' ? 'AnchorFront' : // ^
                              node.kind === '$' ? 'AnchorBack' : // $
                              'WordBound'; // \\b, but includes \\B too! don't think it matters for highlighting..
-                 }
-                array.push(addHTML( { type: node.type, kind: node.kind, negative: node['negative'], prefix: rprefix ? rprefix : node.loc.source, tooltip: "Anchor" } ));
+                }
+                array.push( { type: node.type, html: `<span class='${node.type} ${node.kind}'>${escapeHTML(rprefix)}` } );
             },
             post({node}) {
                 if (node.kind === 'Lookahead' || node.kind === 'Lookbehind')
@@ -186,7 +188,7 @@ export const regexHighlight = ({
             }
         },
         Backreference({node}) {
-            array.push(addHTML( { type: node.type, kind: node.kind, name: node['name'], number: node['number'], reference: node.reference, string: node.loc.source } ));
+            array.push( { type: node.type, kind: node.kind, name: node['name'], number: node['number'], reference: node.reference, string: node.loc.source, html: `<span class='${node.type} ${node.kind || ''}'>${escapeHTML(node.loc.source)}</span>` } );
         },
         Char(node) {
             if (node.property === 'to') {
@@ -198,10 +200,7 @@ export const regexHighlight = ({
             
             node = node.node; // we don't need anything else on NodePath
             
-            let token = { type: node.type, kind: node.kind, escaped: node['escaped'], 
-                          string: node.loc.source };
-
-            array.push(addHTML(token));
+            array.push({ type: node.type, html: `<span class='${node.type} ${node.kind || ''}'>${escapeHTML(node.loc.source)}</span>` });
             
         },
         CharacterClass:  {
@@ -215,7 +214,7 @@ export const regexHighlight = ({
         },
         ClassRange: {
             pre({node}) {
-                array.push({ type: node.type, kind: node.kind, html: `<span  class='ClassRange'>` });
+                array.push({ type: node.type, html: `<span  class='ClassRange'>` });
             },
             post({node}) {
                 array.push({ type: node.type, html: `</span>`});
