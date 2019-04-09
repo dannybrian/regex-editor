@@ -4,11 +4,11 @@ import test from 'ava';
 import { regexHighlight, RegexError } from '../src/regex-highlighter';
 
 const escapeRegExp = (string) => {
-  return String.raw`${string}`.replace(/\\/, '\\\\', 'g');
+    return String.raw`${string}`.replace(/\\/, '\\\\', 'g');
 };
 
 test('import', t => {
-  t.truthy(regexHighlight);
+    t.truthy(regexHighlight);
 });
 
 test('well-formed HTML', t => {
@@ -33,5 +33,13 @@ test('token categorizations', t => {
     t.is(root.querySelectorAll('.Backreference').length, 1); // actually 2, but 1 shallow
     // So these querySelector tests are pretty brittle.
     
-    // console.log(util.inspect(regexHL.array, { showHidden: false, depth: null, colors: true }));
+    // console.log(util.inspect(regexHL.ast, { showHidden: false, depth: null, colors: true }));
 });
+
+/* This won't work; our parser will see the dual code points.
+test('unescaped emojis', t => {
+    const regexHL = regexHighlight({ regex: '/❤️👩\\u{1F469}/u' });
+    console.log(util.inspect(regexHL.ast, { showHidden: false, depth: null, colors: true }));
+});
+*/
+

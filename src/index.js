@@ -14,6 +14,7 @@ class RegexEditor extends LitElement {
         return {
             parseResult: String,
             debugLevel: String,
+            regexError: String,
             // note that lit-element has its own default converters for each type
             // (thus the reason for declaring a type)
             flags: {
@@ -25,14 +26,9 @@ class RegexEditor extends LitElement {
                         // put this string into our object
                         let flagsobj = {};
                         value.split('').forEach(flag => { flagsobj[flag] = true; });
-                        console.log(flagsobj);
                         return flagsobj;
                     },
-                    toAttribute: (value, type) => { // obj in
-                        return Object.keys(value)
-                            .filter(flag => value[flag])
-                            .join('');
-                    }
+                    toAttribute: (value, type) => { this._flagsToString; }// obj in
                 }
             },
             regexValue: { attribute: true, reflect: true }
@@ -54,6 +50,11 @@ class RegexEditor extends LitElement {
         // see the note at the bottom of src/regex-highlighter.js.
         this._handleInput();
     }
+    _flagsToString(flags) {
+        return Object.keys(flags)
+            .filter(flag => flags[flag])
+            .join('');
+    }
     _escapeHTML(unsafe) {
         return unsafe
          .replace(/&/g, "&amp;")
@@ -67,7 +68,7 @@ class RegexEditor extends LitElement {
         this.regexValue = regexVal; // reflected to property
         try
         {
-            let regex = regexHighlight({ regex: '/' + regexVal + '/' });
+            let regex = regexHighlight({ regex: '/' + regexVal + '/' + this._flagsToString(this.flags) });
             // log.trace(regex.array);
             // remember that regex.html now contains escaped regex with normal
             // HTML markup
@@ -112,6 +113,7 @@ class RegexEditor extends LitElement {
     _flagChanged(e) {
         // gotta assign the top object, not key/values!
         this.flags = Object.assign({}, this.flags, {[e.target.id]: e.target.checked});
+        this._handleInput();
     }
     render(){
         // FIXME: instead of loading CSS here, use static styles etc.

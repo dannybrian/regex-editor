@@ -5,7 +5,7 @@ const regexpTree = require('regexp-tree');
 /* This module will make a lot more sense if you read the regexp-tree docs :-) */
 
 const log = ulog('rexeg-highlighter');
-const errorRegex = new RegExp(/^SyntaxError:\s+(\/.+?\/)\s+\^\s+(Unexpected.+?):\s+["'](.+?)["']\s+(?:at\s+(\d+):(\d+))?\./, 'm');
+const errorRegex = new RegExp(/^SyntaxError:\s+(\/.+?\/\w*?)\s+\^\s+(Unexpected.+?):\s+["'](.+?)["']\s+(?:at\s+(\d+):(\d+))?\./, 'm');
 const unknownErrorRegex = new RegExp(/SyntaxError:\s+(.+)\s*$/, 'g');
 
 const escapeRegex = (s) => {
@@ -46,7 +46,6 @@ export const regexHighlight = ({
 
     try {
         ast = regexpTree.parse(regex, { captureLocations: true });
-        // log.debug(ast);
     }
     catch (err)
     {
@@ -201,7 +200,7 @@ export const regexHighlight = ({
             
             let token = { type: node.type, kind: node.kind, escaped: node['escaped'], 
                           string: node.loc.source };
-                
+
             array.push(addHTML(token));
             
         },

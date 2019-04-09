@@ -4,7 +4,7 @@ import test from 'ava';
 import { regexHighlight, RegexError } from '../src/regex-highlighter';
 
 test('import', t => {
-  t.truthy(regexHighlight);
+    t.truthy(regexHighlight);
 });
 
 /*
@@ -16,8 +16,8 @@ test('bar', async t => {
 
 
 test('regex parse',  t => {
-   const regexHL = regexHighlight({ regex: '/a|b+/' });
-   t.truthy(regexHL);
+     const regexHL = regexHighlight({ regex: '/a|b+/' });
+     t.truthy(regexHL);
 });
 
 test('passing RegExp object', t => {
@@ -78,8 +78,6 @@ test('AST character classes', t => {
      t.is(regexHL.array[13].type, "Quantifier");
      t.is(regexHL.array[13].string, "+");
     
-     //console.log(util.inspect(regexHL.ast, { showHidden: false, depth: null, colors: true }));
-     // console.log(util.inspect(regexHL.array, { showHidden: false, depth: null, colors: true }));
 });
 
 test('error parsing edge case', t => {

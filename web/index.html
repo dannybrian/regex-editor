@@ -9,8 +9,19 @@
     <link rel="stylesheet" href="regex-editor-bundle.css">
   </head>
   <body>
-      <regex-editor regexValue="a|b|\w+" flags="ixm"></regex-editor>
-      <regex-editor regexValue="(a|b)\/+(?<V>hi\b)(?=ab|cde)\n\1\x{1234}\1\k<V>.([a-z0-9]*?|bb{1,12})" flags="gus"></regex-editor>
+      <div id="_tests" style="z-index: -1; position: absolute; top: 0; right: 0; width: 100%; height: 100%;">
+          <div style="background-color:rgb(255, 251, 168); position: absolute; width: 400px; height: 50px; top: 150px;"></div>
+          <div style="background-color:rgb(255, 251, 168); position: absolute; width: 110px; height: 100px; top: 50px; left: 600px;"></div>
+          <div style="background-color:rgb(255, 251, 168); position: absolute; width: 110px; height: 100px; top: 200px; left: 714px;"></div>
+          <div style="background-color:white; position: absolute; width: 400px; height: 50px; top: 304px;"></div>
+          <div style="background-color:white; position: absolute; width: 400px; height: 50px; top: 454px;"></div>
+      </div>
+      
+      <regex-editor regexValue="a|b|\w+/" flags="ixm"></regex-editor>
+      <regex-editor regexValue="(a|b)\/+(?<V>hi\b)(?=ab|cde)\n\1\u{1F469}\1\k<V>.([a-z0-9]*?|bb{1,12})" flags="gus"></regex-editor>
+      <regex-editor regexValue="(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*)@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])" flags="x"></regex-editor>
+      <regex-editor regexValue="🚀ab|c💖" flags="u"></regex-editor>
+      
   </body>
   <script src="regex-editor-bundle.js"></script>
 </html>
