@@ -454,6 +454,28 @@ var handler =
 
 */
 
+// https://hacks.mozilla.org/2015/07/es6-in-depth-proxies-and-reflect/
+test('Autocreate parameters! (AUTOLOAD)', t => {
+    function Tree() {
+        return new Proxy({}, handler);
+    }
+
+    var handler = {
+        get: function (target, key, receiver) {
+            if (!(key in target)) {
+                target[key] = Tree();  // auto-create a sub-Tree
+            }
+            return Reflect.get(target, key, receiver);
+        }
+    };
+    
+    var tree = Tree();
+    tree.branch1.branch3.twig = "yellow";
+    
+    t.truthy(tree.branch1.branch3);
+    t.is(tree.branch1.branch3.twig, "yellow");
+    
+});
 
 /* Symbols, not including now */
 

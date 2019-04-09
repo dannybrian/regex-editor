@@ -29,6 +29,7 @@
     ]
   },
   "dependencies": {
+    "emoji-regex": "^8.0.0",
     "esm": "^3.2.22",
     "lit-element": "^2.1.0",
     "regexp-tree": "^0.1.5",

@@ -36,7 +36,10 @@ test('token categorizations', t => {
     // console.log(util.inspect(regexHL.ast, { showHidden: false, depth: null, colors: true }));
 });
 
-/* This won't work; our parser will see the dual code points.
+/* This won't work; our parser will see the dual code points. Regexr doesn't get this 
+   right, either; regex101.com does. But matching individual emojis doesn't seem that 
+   useful to our engine anyway.
+   
 test('unescaped emojis', t => {
     const regexHL = regexHighlight({ regex: '/❤️👩\\u{1F469}/u' });
     console.log(util.inspect(regexHL.ast, { showHidden: false, depth: null, colors: true }));
