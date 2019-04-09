@@ -71,8 +71,8 @@ Where you need `require()` (and you will), require imports at the top of your cl
 
 Build custom elements as ES6 classes that inherit from `HTMLElement` or `LitElement`, or others. These should:
 
-- Expose a documented API for attributes and methods "in"
-- Broadcast custom events "out", with an *occassional* reflection to element attributes)
+- Expose a documented API for attributes and methods "in".
+- Broadcast custom events "out", with an *occassional* reflection to element attributes.
 - Minimize doc queries in JavaScript; avoid them entirely when possible, using templates instead. See [performant templates](https://lit-element.polymer-project.org/guide/templates#design-a-performant-template) in the lit-element docs.
 - Rendering should have zero side effects.
 - Avoid all use of `innerHTML` (although this custom element does it extensively).
