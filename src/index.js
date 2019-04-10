@@ -109,6 +109,17 @@ class RegexEditor extends LitElement {
             }
             // use whatever is in the text area input value
             let escapedHTMLVal = this._escapeHTML(regexVal);
+            
+            // highlight the error #7, harder than I expected
+            /*
+            escapedHTMLVal = escapedHTMLVal.slice(0, err.error['column']) +
+                            `<span class="Error">` +
+                            escapedHTMLVal.slice(err.error['column'], 1) +
+                            `</span>` +
+                            escapedHTMLVal.slice(err.error['column'] + 1);
+            console.log(escapedHTMLVal);
+            console.log(err.error['column']);
+            */
             this.regexBackground.innerHTML = escapedHTMLVal;
             this.regexForeground.innerHTML = escapedHTMLVal;
         }
