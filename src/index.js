@@ -68,10 +68,13 @@ class RegexEditor extends LitElement {
         this.regexValue = regexVal; // reflected to property
         try
         {
-            let regex = regexHighlight({ regex: '/' + regexVal + '/' + this._flagsToString(this.flags) });
-            // log.trace(regex.array);
-            // remember that regex.html now contains escaped regex with normal
-            // HTML markup
+            let flagsNoX = Object.assign({}, this.flags);
+            delete flagsNoX['x'];
+            // we ignore /x here to keep editable text; see /x comments in tests/1-ast.js
+            // FIXME: there's a fancy way to do this with {i,u,g,m,s} but I'm too lazy
+            // right now to find it.
+            let regex = regexHighlight({ regex: '/' + regexVal + '/' + this._flagsToString(flagsNoX) });
+            
             if (regex.success) {
                 if (regex.html === undefined) {
                     log.error('Regex HTML is undefined, but saying success?');
@@ -138,7 +141,7 @@ class RegexEditor extends LitElement {
                     </div>
                     <div>
                         <input type="checkbox" id="m" name="m" ?checked="${this.flags.m}" @change="${this._flagChanged}">
-                        <label for="m"><span class="flag-label">m</span>ultiline</label>
+                        <label for="m"><span class="flag-label">m</span>ultiline ^$</label>
                     </div>
                 </div>
                 <div class="right">

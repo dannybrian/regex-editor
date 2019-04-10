@@ -29,6 +29,7 @@
     ]
   },
   "dependencies": {
+    "acorn": "^6.1.1",
     "emoji-regex": "^8.0.0",
     "esm": "^3.2.22",
     "lit-element": "^2.1.0",

@@ -52,7 +52,8 @@ test('regex string parse with errors',  t => {
 });
 
 test('regex AST', t => {
-    const regexHL = regexHighlight({ regex: String.raw`/^q(?!u)\b(\w+)[a-z]{1,}(?<hello>hello)(a|bb{1,12})\\1\b\k<hello>$/i` }); // the \\1 because otherwise it's a JS octal literal
+    const regexHL = regexHighlight({ regex: `/^q(?!u)\b(\w+)[a-z]{1,}(?<hello>hello)(a|bb{1,12})\\1\b\k<hello>$/i` });
+    // the \\1 because otherwise it's a JS octal literal
     t.true(regexHL.success);
     
     // console.log(util.inspect(regexHL.array, { showHidden: false, depth: null, colors: true }));
@@ -113,7 +114,7 @@ test('AST chars', t => {
 });
 
 test('AST character classes', t => {
-     const regexHL = regexHighlight({ regex: String.raw`/qq+w.[a-z]+[^0-9]*/` });
+     const regexHL = regexHighlight({ regex: `/qq+w.[a-z]+[^0-9]*/` });
      //console.log(util.inspect(regexHL.array, { showHidden: false, depth: null, colors: true }));
      t.true(regexHL.success);
      // t.is(regexHL.array[6].string, "[a-z]"); // we stopped adding {string}
@@ -139,6 +140,43 @@ test('error parsing edge case', t => {
     }
 });
 
+// #5
+test('x flag', t => {
+    const regexHL = regexHighlight({ regex: '/(?<year>  [0-9]{4} ) -?  # year\n' +
+                                                 '(?<month> [0-9]{2} ) -?  # month\n' +
+                                                 '(?<day>   [0-9]{2} )     # day/x'});
+        
+        /* regexp-tree wants a newline after the last # here, eating up the /x as part 
+           of the comment. I fixed this in a forked branch and pull request, but for 
+           now it needs the following change to 
+          ./node_modules/regexp-tree/dist/parser/generated/regexp-tree.js:
+          
+          387 var lexRules = [[/^#[^\n]*(?=\n|\/\w*)/ ....
+          (generated from https://github.com/dannybrian/regexp-tree/commit/438a3594e5cabbad26c506d2dab2cba30d79df7d)
+          (issue at https://github.com/DmitrySoshnikov/regexp-tree/issues/173)
+        */
+        
+    t.true(regexHL.success);
+    
+        /* After fixing the above issue, I tackled the real issue #5; basically, we 
+           don't want to display the parse resulting from /x, because we don't want 
+           whitespace removed/ignored. The solution is to display the result of NOT /x
+           for the purpose of editing. This might prove true with other flags, too. 
+           In other words, we disable the x flag for the parse. This is a UI concern,
+           so no changes to regex-highlighter.js. If you need to display the regex 
+           sanely or for editing, just don't use the /x flag. */
+    
+    t.true(true); // LOL
+
+    //}
+    
+});
+
+test('unicode inline to regex (FIXME)', t => {
+    const regexHL = regexHighlight({ regex: '/🚀/u'});
+    t.falsy(regexHL.array[1].html.includes('🚀'));
+    // #4 would be nice if it were truthy ^^
+})
 
 
 function knownCharCodeAt(str, idx) {
