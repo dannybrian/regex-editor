@@ -130,16 +130,42 @@ class RegexEditor extends LitElement {
         this._handleInput();
     }
     _mouseDown(e) {
-        // the reason I'm using clicks for this is so I can keep 
-        let els = this._elsFromPoint(e.clientX, e.clientY);
-        console.log(els);
+        // the reason I'm using clicks for this is so I can keep touch screen behavior
+        // consistent (?)
+        
+        let els = this._elsFromPoint(e.clientX, e.clientY, 'onclick');
+        // we don't actually click, we just use the attribute here to know where to stop
+        // and highlight ^^
+
+        // (call without the attribute ('onclick' here) ^^ to get all elements down the 
+        // stack.)
+        
+        if (els === undefined) return;
+        if (Array.isArray(els)) {
+            
+        }
+        else
+        {
+            console.log(`Hey cool, it's a ${els.getAttribute('class')}`);
+            if (els.hasAttribute('data-name')) {
+                console.log(`Name is ${els.getAttribute('data-name')}`);
+            }
+            if (els.hasAttribute('data-number')) {
+                console.log(`Number is ${els.getAttribute('data-number')}`);
+            }
+        }
+        
+        // this would be a nice candidate for a generator, where this function could
+        // iterate *elsFromPoint() until it finds a given attribute (e.g. onclick) 
+        // and then *elsFromPoint() would stay reusable of other attributes, without 
+        // the attribute argument being sent.
     }
-    _elsFromPoint(x, y) {
+    _elsFromPoint(x, y, attr) {
         // I really hope to not need this function very often :) It's only because
         // of the wonkiness needed to keep the <textarea>; note that other online
         // regex editors simulate a cursor instead.
     
-        let el, stack = [];
+        let el, stack = [], oneel;
         while (el = this.shadowRoot.elementFromPoint(x, y)) {
             // omg this works?! ^^
             stack.push(el);
@@ -147,13 +173,14 @@ class RegexEditor extends LitElement {
             // we remove it below..
             // wonder how expensive this is ^^, but it's happening between render
             // ticks, right? So not much
+            if (attr && el.getAttribute(attr)) { oneel = el; break; } // just looking for this one
             if (el.tagName === 'REGEX-EDITOR' || el.tagName === 'HTML') { break; }
         }
         // clean up
         for(var i  = 0; i < stack.length; i += 1)
             stack[i].classList.remove('noPointer');
 
-        return stack;
+        return oneel ? oneel : stack;
     }
     render(){
         // FIXME: instead of loading CSS here, use static styles etc.

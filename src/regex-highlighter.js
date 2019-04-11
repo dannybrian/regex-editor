@@ -177,7 +177,7 @@ export const regexHighlight = ({
                              node.kind === '$' ? 'AnchorBack' : // $
                              'WordBound'; // \\b, but includes \\B too! don't think it matters for highlighting..
                 }
-                array.push( { type: node.type, html: `<span class='${node.type} ${node.kind}'>${escapeHTML(rprefix)}` } );
+                array.push( { type: node.type, html: `<span class='${node.type} ${node.kind}' onclick='true'>${escapeHTML(rprefix)}` } );
             },
             post({node}) {
                 if (node.kind === 'Lookahead' || node.kind === 'Lookbehind')
@@ -187,7 +187,7 @@ export const regexHighlight = ({
                 array.push({ kind: node.kind, html: "</span>" });
             }
         },
-        Backreference({node}) {
+        Backreference({node}) { // FIXME: do we need all this?
             array.push( { type: node.type, kind: node.kind, name: node['name'], number: node['number'], reference: node.reference, string: node.loc.source, html: `<span class='${node.type} ${node.kind || ''}'>${escapeHTML(node.loc.source)}</span>` } );
         },
         Char(node) {
@@ -214,7 +214,7 @@ export const regexHighlight = ({
         },
         ClassRange: {
             pre({node}) {
-                array.push({ type: node.type, html: `<span  class='ClassRange'>` });
+                array.push({ type: node.type, html: `<span class='ClassRange'>` });
             },
             post({node}) {
                 array.push({ type: node.type, html: `</span>`});
@@ -262,25 +262,28 @@ export const regexHighlight = ({
                     if (node['name']) {
                         // one-off to format this ourselves, it's
                         // more complex than the others
-                        array.push( { type: node.type, 
-                                      html: `<span class='Group Named'><span class="GroupChar">(?&lt;</span>`
+                        array.push( { type: node.type,
+                                      name: node.name,
+                                      html: `<span class='Group Named' data-number='${node.number}' data-name='${node.name}' onclick='true'><span class="GroupChar">(?&lt;</span>`
                                     } );
                         array.push( { type: node.type,
-                                      html: `<span class='CaptureName'>${node.name}</span><span class="GroupChar">&gt;</span>`
-                                    } );
+                                      name: node.name,
+                                      html: `<span class='CaptureName' onclick='true' data-name='${node.name}'>${node.name}</span><span class="GroupChar">&gt;</span>`
+                                    } ); // 'true' is throwaway
                         return;
                     }
                     else
                     {
                         array.push( { type: node.type,
-                                      html: `<span class='Group Capture'><span class="GroupChar">(</span>`
+                                      number: node.number,
+                                      html: `<span class='Group Capture' data-number='${node.number}' onclick='true'><span class="GroupChar">(</span>`
                                     } );
                     }
                 }
                 else
                 {
                     array.push( { type: node.type,
-                                      html: `<span class='Group Capture'><span class="GroupChar">(?:</span>`
+                                      html: `<span class='Group NoCapture' onclick='true'><span class="GroupChar">(?:</span>`
                                     } );
                 }
                 
