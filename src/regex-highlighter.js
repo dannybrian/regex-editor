@@ -245,7 +245,7 @@ export const regexHighlight = ({
                 
                 if (node['left'] && !node['right']) {
                     // log.debug('Disjunction missing right...');
-                    if (ret.regexString.substr(-2, 1) === '|') {
+                    if (ret.regexString.match(/|\/\w*$/)) { // keep an eye on this
                         array.push( { type: node.type, html: '<span class="DisjunctionMetaChar">|</span>' } );
                     }
                 }

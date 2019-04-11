@@ -23,6 +23,12 @@ body {
     background-color: #f2f2f2;
 }
 
+// these noPointer classes are toggles for use by elsFromPoint() in 
+// index.js, used to find our regex tokens for tooltip
+.noPointer {
+    pointer-events: none;
+}
+
 /* regex styles */
 
 #regexTopContainer {
@@ -82,6 +88,10 @@ body {
         font-family: 'Source Sans Pro', sans-serif;
         margin: 16px;
     }
+    
+    &.noPointer {
+        pointer-events: none;
+    }
 
 }
 
@@ -131,12 +141,17 @@ body {
         .regex .delim {
             color: #aaa;
         }
+        &.noPointer {
+            pointer-events: none;
+        }
     }
     
     // see index.js for details
     #regexInput {
         pointer-events: all;
-        
+        &.noPointer {
+            pointer-events: none;
+        }
     }
 
     /* make our text area transparent except for the cursor */
@@ -162,6 +177,17 @@ body {
     /* regex-specific markup, e.g. colors */
     
     #regexBackground {
+        pointer-events: all;
+        &.noPointer {
+            pointer-events: none;
+        }
+        span {
+            pointer-events: all;
+            &.noPointer {
+                pointer-events: none;
+            }
+        }
+        
         .Assertion {
             background-color: rgba(157, 39, 162, 0.11);
             .Char {

@@ -19,6 +19,13 @@ test('well-formed HTML', t => {
     t.truthy(root);
 });
 
+test('pipe while typing', t => {
+    // it wasn't getting in to the HTML when it isn't a complete disjuntion even
+    // though the parse succeeeds.
+    const regexHL = regexHighlight({ regex: '/a|/' });
+    t.truthy(regexHL.array[regexHL.array.length - 1].html.includes("|"));
+});
+
 test('token categorizations', t => {
     // FIXME: unicode escapes don't work well here, at least not the \x{0000} style
     const regex = ('/^(a|b)\\/+(?<V>hi\b)(?=ab|cde)\\1\k<V>.\u0000([a-z0-9]*?|bb{1,12})$/u');

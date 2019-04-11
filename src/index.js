@@ -125,9 +125,35 @@ class RegexEditor extends LitElement {
         }
     }
     _flagChanged(e) {
-        // gotta assign the top object, not key/values!
+        // gotta assign the top object, not key/values, to get reflection
         this.flags = Object.assign({}, this.flags, {[e.target.id]: e.target.checked});
         this._handleInput();
+    }
+    _mouseDown(e) {
+        // the reason I'm using clicks for this is so I can keep 
+        let els = this._elsFromPoint(e.clientX, e.clientY);
+        console.log(els);
+    }
+    _elsFromPoint(x, y) {
+        // I really hope to not need this function very often :) It's only because
+        // of the wonkiness needed to keep the <textarea>; note that other online
+        // regex editors simulate a cursor instead.
+    
+        let el, stack = [];
+        while (el = this.shadowRoot.elementFromPoint(x, y)) {
+            // omg this works?! ^^
+            stack.push(el);
+            el.classList.add('noPointer'); // using a class preserves what was there when
+            // we remove it below..
+            // wonder how expensive this is ^^, but it's happening between render
+            // ticks, right? So not much
+            if (el.tagName === 'REGEX-EDITOR' || el.tagName === 'HTML') { break; }
+        }
+        // clean up
+        for(var i  = 0; i < stack.length; i += 1)
+            stack[i].classList.remove('noPointer');
+
+        return stack;
     }
     render(){
         // FIXME: instead of loading CSS here, use static styles etc.
@@ -174,16 +200,20 @@ class RegexEditor extends LitElement {
             <div id="regexContainer" class="${this.parseResult}">
                 <div id="regexBackground"></div>
                 <div id="regexInputContainer">
-                    <textarea id="regexInput" @input="${this._handleInput}" @blur="${this._handleInput}" wrap="hard" placeholder="regex goes here" autocorrect="off" autocapitalize="off" autocomplete="off" spellcheck="false" scrolling="no">${this.regexValue}</textarea>
+                    <textarea id="regexInput" @input="${this._handleInput}"  @mousedown="${this._mouseDown}" wrap="hard" placeholder="regex goes here" autocorrect="off" autocapitalize="off" autocomplete="off" spellcheck="false" scrolling="no">${this.regexValue}</textarea>
                 </div>
                 <div id="regexForeground"></div>
             </div>
             <div id="regexError">${this.regexError}</div>
           </div>
         `;
+        
+        // why did we have @blur="${this._handleInput}" on textarea above? don't recall
+
         // ANOTHER NOTE: There's a lot of custom stuff going on with the events
         // trigged by <textarea>, including rewriting of its value on errors etc.
     }
 }
 
 customElements.define('regex-editor', RegexEditor);
+
