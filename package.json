@@ -5,6 +5,7 @@
   "main": "regex-editor.js",
   "module": "regex-editor.js",
   "scripts": {
+    "serve": "ws -d web/ -p 8004",
     "test": "ava --verbose tests/*.js",
     "build-js": "browserify --debug src/index.js -p esmify > web/regex-editor-bundle.js ; [[ ${PIPESTATUS[0]} -eq 0 ]] && [[ ${PIPESTATUS[1]} -eq 0 ]] || notify -t 'JS Build Error' -m 'Browserify encountered a build error.' -x false;",
     "build-css": "find src/ -name '*.less' -print0 | xargs -0 -n1 -I '{}' lessc {} web/regex-editor-bundle.css || notify -t 'CSS Build Error' -m 'Less encountered a build error.' -x false",
@@ -18,9 +19,9 @@
     "browserify": "^16.2.3",
     "butternut": "^0.4.6",
     "esmify": "^2.1.1",
-    "html-element": "^2.2.0",
+    "html-element": "^2.3.0",
     "less": "^3.9.0",
-    "node-html-parser": "^1.1.14",
+    "node-html-parser": "^1.1.15",
     "node-notifier-cli": "^1.1.2"
   },
   "ava": {
@@ -31,9 +32,9 @@
   "dependencies": {
     "acorn": "^6.1.1",
     "emoji-regex": "^8.0.0",
-    "esm": "^3.2.22",
+    "esm": "^3.2.25",
     "lit-element": "^2.1.0",
-    "regexp-tree": "^0.1.5",
+    "regexp-tree": "^0.1.10",
     "ulog": "^2.0.0-beta.6"
   }
 }

@@ -26,6 +26,10 @@ This will create the necessary bundle files in `web/`.
 `% npm run build-js`
 `% npm run build-css`
 
+## Serve
+
+`% npm run serve` // needs ws installed (`npm install ws`)
+
 # As a Model for Further Development
 
 Being the first code I've written for Aparte, I've tried to establish some best 
