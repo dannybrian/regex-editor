@@ -16,13 +16,13 @@
   "devDependencies": {
     "ava": "^1.4.1",
     "browser-resolve": "^1.11.3",
-    "browserify": "^16.2.3",
+    "browserify": "^16.5.0",
     "butternut": "^0.4.6",
     "esmify": "^2.1.1",
-    "html-element": "^2.3.0",
-    "less": "^3.9.0",
-    "node-html-parser": "^1.1.15",
-    "node-notifier-cli": "^1.1.2"
+    "html-element": "^2.3.1",
+    "less": "^3.11.1",
+    "node-html-parser": "^1.2.5",
+    "node-notifier-cli": "^1.2.0"
   },
   "ava": {
     "require": [
@@ -30,11 +30,11 @@
     ]
   },
   "dependencies": {
-    "acorn": "^6.1.1",
+    "acorn": "^6.4.0",
     "emoji-regex": "^8.0.0",
     "esm": "^3.2.25",
-    "lit-element": "^2.1.0",
-    "regexp-tree": "^0.1.10",
+    "lit-element": "^2.2.1",
+    "regexp-tree": "^0.1.19",
     "ulog": "^2.0.0-beta.6"
   }
 }

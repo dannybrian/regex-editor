@@ -154,6 +154,8 @@ test('x flag', t => {
           387 var lexRules = [[/^#[^\n]*(?=\n|\/\w*)/ ....
           (generated from https://github.com/dannybrian/regexp-tree/commit/438a3594e5cabbad26c506d2dab2cba30d79df7d)
           (issue at https://github.com/DmitrySoshnikov/regexp-tree/issues/173)
+          (Dmitri offers a good rationale for keeping the existing behavior, so I might
+           need to keep this as my own one-line change locally unless I want to fork it.)
         */
         
     t.true(regexHL.success);
