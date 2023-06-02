@@ -4,6 +4,7 @@
   "description": "Edit, highlighting, optimization, and other features for regexes.",
   "main": "regex-editor.js",
   "module": "regex-editor.js",
+  "type": "module",
   "scripts": {
     "serve": "ws -d web/ -p 8004",
     "test": "ava --verbose tests/*.js",
@@ -14,7 +15,7 @@
   "author": "Danny Brian",
   "license": "ISC",
   "devDependencies": {
-    "ava": "^1.4.1",
+    "ava": "^5.3.0",
     "browser-resolve": "^1.11.3",
     "browserify": "^16.5.0",
     "butternut": "^0.4.6",

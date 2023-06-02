@@ -1,7 +1,6 @@
-const util = require('util');
 import { parse } from 'node-html-parser';
 import test from 'ava';
-import { regexHighlight, RegexError } from '../src/regex-highlighter';
+import { regexHighlight, RegexError } from '../src/regex-highlighter.js';
 
 const escapeRegExp = (string) => {
     return String.raw`${string}`.replace(/\\/, '\\\\', 'g');

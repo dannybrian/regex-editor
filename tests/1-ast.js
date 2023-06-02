@@ -1,7 +1,5 @@
-const util = require('util')
-
 import test from 'ava';
-import { regexHighlight, RegexError } from '../src/regex-highlighter';
+import { regexHighlight, RegexError } from '../src/regex-highlighter.js';
 
 test('import', t => {
     t.truthy(regexHighlight);
@@ -144,7 +142,8 @@ test('error parsing edge case', t => {
 test('x flag', t => {
     const regexHL = regexHighlight({ regex: '/(?<year>  [0-9]{4} ) -?  # year\n' +
                                                  '(?<month> [0-9]{2} ) -?  # month\n' +
-                                                 '(?<day>   [0-9]{2} )     # day/x'});
+                                                 // '(?<day>   [0-9]{2} )     # day/x'});
+                                                 '(?<day>   [0-9]{2} )     # day\n' + '/x'});
         
         /* regexp-tree wants a newline after the last # here, eating up the /x as part 
            of the comment. I fixed this in a forked branch and pull request, but for 

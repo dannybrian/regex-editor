@@ -1,10 +1,10 @@
-const util = require('util'); // dev only
-const ulog = require('ulog');
-const regexpTree = require('regexp-tree');
+import regexpTree from 'regexp-tree';
+import anylogger from 'anylogger';
+
+const log = anylogger('regex-highlighter')
 
 /* This module will make a lot more sense if you read the regexp-tree docs :-) */
 
-const log = ulog('rexeg-highlighter');
 const errorRegex = new RegExp(/^SyntaxError:\s+(\/.+?\/\w*?)\s+\^\s+(Unexpected.+?):\s+["'](.+?)["']\s+(?:at\s+(\d+):(\d+))?\./, 'm');
 const unknownErrorRegex = new RegExp(/SyntaxError:\s+(.+)\s*$/, 'g');
 
