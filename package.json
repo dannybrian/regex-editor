@@ -15,15 +15,15 @@
   "author": "Danny Brian",
   "license": "ISC",
   "devDependencies": {
-    "ava": "^5.3.0",
+    "ava": "^5.3.1",
     "browser-resolve": "^1.11.3",
-    "browserify": "^16.5.0",
+    "browserify": "^17.0.1",
     "butternut": "^0.4.6",
     "esmify": "^2.1.1",
     "html-element": "^2.3.1",
-    "less": "^3.11.1",
+    "less": "^4.9.0",
     "node-html-parser": "^1.2.5",
-    "node-notifier-cli": "^1.2.0"
+    "node-notifier-cli": "^2.0.0"
   },
   "ava": {
     "require": [
@@ -31,8 +31,6 @@
     ]
   },
   "dependencies": {
-    "acorn": "^6.4.0",
-    "emoji-regex": "^8.0.0",
     "esm": "^3.2.25",
     "lit-element": "^2.2.1",
     "regexp-tree": "^0.1.19",

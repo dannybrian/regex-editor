@@ -1,17 +1,32 @@
 # Regex Editor/Highlighter
 
-This is a web-based editor for regular expressions, initially created as a component of the Aparte NLP project.
+A web-based editor and syntax highlighter for regular expressions, built as a
+custom element (`<regex-editor>`) using
+[lit-element](https://github.com/Polymer/lit-element). The highlighter itself
+runs in both Node and modern browsers. I use this in regular expression teaching, as well as projects where I want web-based editing of regexes in applications such as rules engines.
 
-~~~~
-import { regexHighlight, RegexError } from '../regex-highlighter'; // needs -r esm under node
+![regex-editor showing a highlighted extended-mode regex with flag toggles](screenshot.png)
 
-const regexHL = regexHighlight({ regex: '/a|b++/gi' }); // simple JS object
-regexHL.flags; // STRING of any flags passed to regex engine, alphabetized
-regexHL.html; // HTML markup for regex just <span> tags with classes
-regexHL.array; // a specialized list of tokens for generating the HTML
-~~~~
-  
+As an ES6 module and custom element (web component), it's portable anywhere:
+
+```js
+    import { regexHighlight, RegexError } from './src/regex-highlighter';
+
+    const regexHL = regexHighlight({ regex: '/a|b++/gi' }); // simple JS object
+    regexHL.flags; // STRING of any flags passed to regex engine, alphabetized
+    regexHL.html; // HTML markup for regex just <span> tags with classes
+    regexHL.array; // a specialized list of tokens for generating the HTML
+```
+
+More likely, you'll just use the custom element:
+
+```html
+    <regex-editor regexValue="a|b|\w+/" flags="ixm"></regex-editor>
+```
+
 ## Install Dependencies
+
+This editor uses the excellent regexp-tree for its underlying parsing, and lit-element as mentioned.
 
 `% npm install`
 
@@ -21,7 +36,8 @@ regexHL.array; // a specialized list of tokens for generating the HTML
 
 ## Build for Browser
 
-This will create the necessary bundle files in `web/`.
+Built bundles are not committed to the repo, so run these first. They create
+`web/regex-editor-bundle.js` and `web/regex-editor-bundle.css`:
 
 `% npm run build-js`
 `% npm run build-css`
@@ -30,100 +46,12 @@ This will create the necessary bundle files in `web/`.
 
 `% npm run serve` // needs ws installed (`npm install ws`)
 
-# As a Model for Further Development
+Then open the demo at the printed URL. `web/index.html` demonstrates the
+`<regex-editor>` element and doubles as a visual test page.
 
-Being the first code I've written for Aparte, I've tried to establish some best 
-practices for further development. This README is not a good example of those 
-practices. :-)
+## Developing
 
-### File Structure
-
-* `src/` - the source code, with `index.js` as an entry point and other modules named sanely. The `index.js` (or `web.js`) file is generally the entry point for a web build. See the `package.json` below. The built library (in `web/`) should be named per the package itself, e.g. `web/regex-editor-bundle.js`.
-* `tests/` - unit tests written with Ava.
-* `web/` - deployable web implementations, with only UI-necessary logic. Build them as custom elements, using [lit-element](https://github.com/Polymer/lit-element) when they need templating and binding etc. Document the API at the top of the .js file. Use `index.html` to load and demonstrate its functionality; ideally, simply loading the index in a browser should demonstrate all its features, acting also as a test.
-* `experiments/` - non-production code to demonstrate or test ideas.
-
-Note that there usually are no git committed versions of built libraries. Builds — full concatenation, minification — are instead committed to a deploy repository. We do want to store some copies of full builds, just not in libs and lower dependencies.
-
-### Node and Browser Capable
-
-JavaScript created for the project should run on both Node and modern browsers. We need this compatibility for the authoring tools, which (may) run Node-free.
-
-### Preprocessors and Builds
-
-I swear by LESS as a CSS preprocessor `(web/*.less)`, Browserify for `require()` compatibility, Butternut/squash (or webpack) for minification, the npm ESM module for making Node ES6-capable (forget `--experimental-modules`), and ESMify for adding ES6 import/export properly to Browserify builds. Many of these decisions are based on the fact that everything I'm writing is as an ES6 module. This doesn't mean everything is an ES6 class! To the contrary. See `package.json` for details.
-
-### ES6 Features
-
-See the test file `tests/0-pattern.js` for ES6 features and patterns I want to utilize more. In particular, there is a heavy reliable on classes, subclassing, and generators throughout the system.
-
-### ES6 Modules
-
-Use `export` as a function keyword to keep this all sane. I personally think that `default` is overrated.
-
-~~~~
-export const regexHighlight = ({ DEFAULTS }) => { }
-~~~~
-
-~~~~
-import { regexHighlight } from '../src/regex-highlighter';
-~~~~
-
-Where you need `require()` (and you will), require imports at the top of your class's `.js`. file and have at least an `src/index.js` which gives a successful browserify build.
-
-### UI
-
-Build custom elements as ES6 classes that inherit from `HTMLElement` or `LitElement`, or others. These should:
-
-- Expose a documented API for attributes and methods "in".
-- Broadcast custom events "out", with an *occassional* reflection to element attributes.
-- Minimize doc queries in JavaScript; avoid them entirely when possible, using templates instead. See [performant templates](https://lit-element.polymer-project.org/guide/templates#design-a-performant-template) in the lit-element docs.
-- Rendering should have zero side effects.
-- Avoid all use of `innerHTML` (although this custom element does it extensively).
-- Include a `web/index.html` that demonstrates uses for the custom element, and ideally function as a no-click set of end-to-end tests.
-
-Refer to `src/index.js` to get a sense of how the above are implemented.
-
-### Errors
-
-Throw errors and add tests to test for them.
-
-~~~~
-export class RegexError extends Error {}
-
-throw new RegexError ('Invalid regular expression, unknown error: ' + err);
-~~~~
-
-~~~~
-try { false; }
-catch (err)
-{
-    t.truthy(err instanceof RegexError);
-    t.is(err.message, 'Invalid regular expression...');
-}
-~~~~
-
-Throwing is almost always a good idea.
-
-~~~~
-catch (err)
-{
-    let matches = errorRegex.exec(err);
-    if (matches && matches.length > 0) {
-        throw Object.assign (new Error, { success: false, error: { message: matches[2], pattern: matches[1],
-          token: matches[3], line: matches[4], column: matches[5] }} );
-    }
-~~~~
-
-As a rule, return data structures, `try/catch/finally` where you need to intercept throws, and throw your own custom errors where you don't anticipate much processing of the exception.
-
-Also don't forget `console.assert()`! It doesn't throw (anymore), so using it anywhere to test *knows* like expected parameters or contracts is useful when an error message in the console is enough. Which it often is.
-
-### Developing
-
-I run the `ws` web server (Node's) in `web/`, but any ol' web server will do.
-
-Continuous watch/build tools like watchify are not pipe/redirection friendly, and I spent plenty of time trying. Watchman is a better tool IMO, and works for any use case. So run:
+To rebuild automatically on changes, use [watchman](https://facebook.github.io/watchman/):
 
 ~~~~
 % watchman watch-del-all
@@ -132,12 +60,8 @@ Continuous watch/build tools like watchify are not pipe/redirection friendly, an
 % watchman shutdown-server # when done
 ~~~~
 
-Although this requires more overhead than constantly running Node watchers, it allows the processes to exit status properly for piping, which I like more. And it doesn't require additional JavaScript build scripts or error handlers. The above pipe to a notification on errors.
+## File Structure
 
-Run the `npm run build-js` or `build-css` scripts to get the details. There is logging capacity via watchman but I haven't bothered to figure it out.
-
-### Logging
-
-I'm using [ulog](https://github.com/Download/ulog).
-
-### package.json
+* `src/` - the source code, with `index.js` as the entry point for the browser build. Styles are in `src/index.less`.
+* `tests/` - unit tests written with Ava.
+* `web/` - the demo page (`index.html`) and build output.

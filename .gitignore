@@ -1,2 +1,5 @@
 **/node_modules/
 .DS_Store
+web/regex-editor-bundle.js
+web/regex-editor-bundle.css
+web/regex-editor-bundle.min.js
