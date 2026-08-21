@@ -44,7 +44,7 @@ Built bundles are not committed to the repo, so run these first. They create
 
 ## Serve
 
-`% npm run serve` // needs ws installed (`npm install ws`)
+`% npm run serve` // needs the `ws` CLI from [local-web-server](https://www.npmjs.com/package/local-web-server) (`npm install -g local-web-server`)
 
 Then open the demo at the printed URL. `web/index.html` demonstrates the
 `<regex-editor>` element and doubles as a visual test page.
